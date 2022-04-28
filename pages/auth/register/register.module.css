@@ -1,0 +1,54 @@
+.register {
+    display: flex;
+    min-height: 100vh;
+}
+
+.picture {
+    background-image: url('../../../public/images/login.png');
+    width: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.containerForm{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 40px;
+}
+
+.title {
+    font-family: var(--druk-font);
+    font-style: normal;
+    font-weight: bold;
+    font-size: 28px;
+    line-height: 47px;
+    text-align: center;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #5B27ED;
+    margin-bottom: 10px;
+}
+
+
+.form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    gap: 30px
+}
+
+
+@media screen and (max-width: 800px)  {
+    .picture{
+        display: none;
+    }
+
+    .containerForm{
+        width: 100%;
+    }
+}

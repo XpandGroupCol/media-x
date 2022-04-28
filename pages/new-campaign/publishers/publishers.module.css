@@ -1,0 +1,157 @@
+.publishers {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.tableContainer{
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
+.table{
+    width: 100%;
+    border-spacing: 5px 15px;
+    border-collapse: separate;
+    min-width: 720px;
+}
+
+.media {
+    background: white;
+    padding: 50px 30px;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+    width: calc(100% - 340px);
+}
+
+.title{
+    font-size: 20px;
+    margin-bottom: 24px;
+}
+
+.subtitle {
+    color: #5b595f;
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+
+.filters{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+
+}
+
+.actions{
+    display: flex;
+    max-width: 600px;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.actions button {
+ width: 300px;   
+}
+
+.lastRow{
+    position: relative;
+}
+
+.deleteIcon svg {
+    width: 16px;
+    height: 16px;
+}
+.summary {
+    background: rgb(255, 255, 255);
+    padding: 50px 30px;
+    width: 320px;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+}
+
+.summaryHeader{
+    margin-bottom: 24px;
+}
+
+div.mb20 {
+    margin-bottom: 24px;
+}
+
+.summaryRow{
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.summaryRow p, 
+.summaryRow strong {
+    font-size: 13px;
+}
+
+.summaryRow strong {
+    font-weight: bold;
+}
+
+.total {
+    border-top: 1px solid rgb(240, 242, 245);
+}
+
+.total p{
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.arrowButton{
+    display: none;
+}
+
+@media screen and (max-width: 1365px) {
+    .media {
+        width: 100%;
+    }
+
+    .summary{
+        width: 100%;
+        order: -1;
+        position: relative;
+        padding: 30px;
+    }
+
+    .content{
+        max-height: 0;
+        overflow: hidden;
+        transition: all .1s ease-in;
+    }
+
+    .showContent {
+        max-height: 400px;
+    }
+
+    .arrowButton{
+        display: flex;
+        position: absolute;
+        top: -20px;
+        right: -20px;
+    }
+
+    .summaryHeader{
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        position: relative;
+    }
+}
+
+@media screen and (max-width: 680px) {
+    .summaryHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px
+    }
+}

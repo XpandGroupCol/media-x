@@ -1,0 +1,16 @@
+.title {
+    text-align: center;
+    border-bottom: 1px solid #e2e2e1;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.deleteIcon {
+    position: absolute;
+    right: 12px;
+    top: 6px;
+}
+
+.modalContent{
+    padding: 48px 24px;
+}

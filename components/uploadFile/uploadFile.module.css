@@ -1,0 +1,30 @@
+.picture{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.inputFile{
+    display: none;
+}
+
+.uploadFile{
+    width: 80px;
+    height: 80px;
+    border: 2px dotted #5b27ed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+}
+
+
+.previewImage {
+    width: 80px;
+    height: 80px;
+    border: 2px dotted #5b27ed;
+    border-radius: 100%;
+}

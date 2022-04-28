@@ -1,0 +1,89 @@
+.form {
+    background: white;
+    padding: 0 30px;
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+}
+
+.header{
+    background: red;
+    width: 100%;
+}
+
+.picture{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.inputDates {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.inputFile{
+    display: none;
+}
+
+.buttons{
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 0 50px;
+}
+
+.button{
+    min-width: 200px;
+}
+
+.amountTitle{
+    font-size: 20px;
+    width: 100%;
+    font-weight: bold;
+}
+
+.title{
+    font-size: 28px;
+    font-weight: bold;
+    padding: 50px 0 20px;
+    width: 100%;
+    border-bottom: 1px solid #e2e2e1;
+}
+
+.divider{
+    width: 100%;
+    height: 1px;
+    background-color:  #e2e2e1;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.uploadFile{
+    width: 80px;
+    height: 80px;
+    border: 2px dotted #5b27ed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+}
+
+.previewImage {
+    width: 80px;
+    height: 80px;
+    border: 2px dotted #5b27ed;
+    border-radius: 100%;
+}
+

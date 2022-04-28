@@ -1,0 +1,7 @@
+export { default as ActivityIcon } from './Activity'
+export { default as ArrowIcon } from './Arrow'
+export { default as CampaignIcon } from './Campaign'
+export { default as HomeIcon } from './Home'
+export { default as MarketplaceIcon } from './Marketplace'
+export { default as PaymentIcon } from './Payment'
+export { default as QuotesIcon } from './Quotes'
