@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Script from 'next/script'
 
 class MyDocument extends Document {
   static async getInitialProps (ctx) {
@@ -15,8 +16,9 @@ class MyDocument extends Document {
             rel='stylesheet'
             href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
           />
+          <script type='text/javascript' src='https://checkout.wompi.co/widget.js' />
         </Head>
-        <body>
+        <body style={{ minHeigth: '100%' }}>
           <Main />
           <NextScript />
         </body>

@@ -19,7 +19,7 @@ const getRow = ({ id, label, device, formats }) => ({
   publisherId: id,
   publisher: label,
   device: device?.label,
-  fotmat: null,
+  fotmat: [],
   share: '',
   value: '',
   objectiveGoal: '',
@@ -28,10 +28,10 @@ const getRow = ({ id, label, device, formats }) => ({
 
 const Publishers = ({ campaign }) => {
   const [showSummary, setShowSummary] = useState(false)
-  const { register, control, handleSubmit, reset, trigger, setError } = useForm({
+  const { register, control, handleSubmit, reset, trigger, setError, setValue } = useForm({
     // defaultValues: {}; you can populate the fields by this attribute
   })
-  const { fields = [], remove, append, replace } = useFieldArray({
+  const { fields = [], remove, append, replace, update } = useFieldArray({
     control,
     name: 'publishers'
   })
@@ -41,6 +41,8 @@ const Publishers = ({ campaign }) => {
   const [filterLocation, setFilterLocation] = useState(null)
   const [filterAge, setFilterAge] = useState(null)
   const [filterSex, setFilterSex] = useState(null)
+
+  console.log({ publisher })
 
   const [rows, setRows] = useState([])
 
@@ -68,6 +70,30 @@ const Publishers = ({ campaign }) => {
   const handleDeleteRow = (index, publisherId) => () => {
     setRows(prevValue => [...prevValue.filter(({ id }) => id !== publisherId)])
     remove(index)
+  }
+
+  const handleOnChangeFormat = (index) => (formats) => {
+    let total = 0
+    let subTotal = 0
+    const devices = []
+
+    console.log({ formats })
+
+    formats.forEach((format) => {
+      console.log('here')
+      const { device, pricePerUnit, biddingModel } = format
+      if (biddingModel === 'CPM') {
+        subTotal += pricePerUnit
+        total += pricePerUnit * 1000
+      } else {
+        subTotal += pricePerUnit
+        total += pricePerUnit
+      }
+
+      devices.push(device)
+    })
+
+    update(index, { ...fields[index], device: devices.join('-'), value: subTotal, objectiveGoal: total, fotmat: formats })
   }
 
   return (
@@ -114,8 +140,8 @@ const Publishers = ({ campaign }) => {
               <thead>
                 <tr>
                   <th />
-                  <th><Typography align='left'>Dispositivo</Typography></th>
                   <th><Typography align='left'>Formatos</Typography></th>
+                  <th><Typography align='left'>Dispositivo</Typography></th>
                   <th><Typography align='left'>Share</Typography></th>
                   <th><Typography align='left'>Valor</Typography></th>
                   <th><Typography align='left'>Meta objetiva</Typography></th>
@@ -143,6 +169,20 @@ const Publishers = ({ campaign }) => {
                           }
                         />
                       </td>
+                      <td width='20%'>
+                        <ControllerField
+                          control={control}
+                          name={`publishers.${index}.fotmat`}
+                          id='format'
+                          options={formats}
+                          fullWidth
+                          size='small'
+                          label='Formatos'
+                          multiple
+                          element={Autocomplete}
+                          onChange={handleOnChangeFormat(index)}
+                        />
+                      </td>
                       <td width='15%'>
                         <ControllerField
                           control={control}
@@ -159,18 +199,7 @@ const Publishers = ({ campaign }) => {
                         />
 
                       </td>
-                      <td width='20%'>
-                        <ControllerField
-                          control={control}
-                          name={`publishers.${index}.fotmat`}
-                          id='format'
-                          options={formats}
-                          fullWidth
-                          size='small'
-                          label='Formatos'
-                          element={Autocomplete}
-                        />
-                      </td>
+
                       <td width='8%'>
                         <ControllerField
                           control={control}
@@ -205,7 +234,7 @@ const Publishers = ({ campaign }) => {
                           fullWidth
                           size='small'
                           label='Meta objetiva'
-                          element={Input}
+                          element={CurrencyInput}
                         />
                       </td>
                       <td width='4%'>
