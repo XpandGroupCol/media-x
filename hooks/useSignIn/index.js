@@ -19,7 +19,6 @@ const useSignIn = () => {
       setSession(data)
       router.push('/campaigns')
     } catch (error) {
-      console.log({ error })
       notify({ message: error?.response?.data?.message || 'test', type: 'error' })
       setLoading(null)
     }
@@ -32,7 +31,6 @@ const useSignIn = () => {
       setSession(data)
       router.push('/campaigns')
     } catch (error) {
-      console.log({ error })
       notify({ message: error?.response?.data?.message || 'test', type: 'error' })
       setLoading(null)
     }

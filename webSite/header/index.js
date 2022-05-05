@@ -42,10 +42,10 @@ const Header = ({ media }) => {
           <p className={styles.planningText}>Planeación, ordenación, pagos y reporte ágil 100% digital</p>
           <div className={styles.fields}>
             <div className={styles.field}>
-              <Autocomplete options={media} label='Medios' placeholder='todos' multiple />
+              <Autocomplete options={media} label='Medios' placeholder='todos' multiple onChange={() => {}} />
             </div>
             <div className={styles.field}>
-              <Autocomplete options={[]} label='Lugar' placeholder='todos' />
+              <Autocomplete options={[]} label='Lugar' placeholder='todos' onChange={() => {}} />
             </div>
           </div>
           <p className={styles.resultsText}>1.538.797 <strong>Impresiones (estimadas)</strong></p>
@@ -57,7 +57,7 @@ const Header = ({ media }) => {
             </div>
             <div className={styles.field}>
               <label>¿Cuánto dinero planeas invertir en tu campaña?</label>
-              <InputDate placeholder='MM/DD/YYYY' />
+              <InputDate placeholder='MM/DD/YYYY' onChange={() => {}} />
             </div>
           </div>
 

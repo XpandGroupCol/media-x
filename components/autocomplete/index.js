@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import MuiAutocomplete from '@mui/material/Autocomplete'
 import Input from 'components/input'
 import { renderlist } from './listItems'
+import Typography from 'components/typography'
 
 const Autocomplete = forwardRef(({
   placeholder, options, label, multiple = false,
@@ -19,6 +20,18 @@ const Autocomplete = forwardRef(({
     }}
     value={value}
     fullWidth
+    limitTags={1}
+    renderTags={(values) => {
+      const [first, ...rest] = values
+      if (first) {
+        return (
+          <Typography component='span'>{first.label}
+            {rest.length > 0 && <Typography component='span'> + {rest.length}</Typography>}
+          </Typography>
+        )
+      }
+      return ''
+    }}
     {...props}
     renderInput={(params) =>
       <Input label={label} error={error} helperText={helperText} {...params} />}

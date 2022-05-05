@@ -4,7 +4,7 @@
 }
 
 .picture {
-    background-image: url('../../../public/images/login.png');
+    background-image: url('../../public/images/login.png');
     width: 50%;
     background-position: center;
     background-repeat: no-repeat;

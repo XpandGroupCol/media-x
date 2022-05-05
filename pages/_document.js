@@ -18,7 +18,7 @@ class MyDocument extends Document {
           />
           <script type='text/javascript' src='https://checkout.wompi.co/widget.js' />
         </Head>
-        <body style={{ minHeigth: '100%' }}>
+        <body>
           <Main />
           <NextScript />
         </body>

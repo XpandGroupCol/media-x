@@ -42,8 +42,6 @@ const Publishers = ({ campaign }) => {
   const [filterAge, setFilterAge] = useState(null)
   const [filterSex, setFilterSex] = useState(null)
 
-  console.log({ publisher })
-
   const [rows, setRows] = useState([])
 
   const onSubmit = (values) => {
@@ -77,10 +75,7 @@ const Publishers = ({ campaign }) => {
     let subTotal = 0
     const devices = []
 
-    console.log({ formats })
-
     formats.forEach((format) => {
-      console.log('here')
       const { device, pricePerUnit, biddingModel } = format
       if (biddingModel === 'CPM') {
         subTotal += pricePerUnit

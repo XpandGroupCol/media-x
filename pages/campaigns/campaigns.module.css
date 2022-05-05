@@ -1,12 +1,140 @@
-.campaigns{
+.newCampaign {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.newCampaign>a {
+    background-color: #5b27ed;
+    color: white;
+}
+
+.campaigns {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 22%));
     gap: 20px;
 }
 
-.card{
+.card {
     background: white;
-    padding: 50px 30px;
+    padding: 30px;
     border-radius: 10px;
     box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+    position: relative;
+}
+
+.status {
+    background-color: #9e9e9e;
+    display: inline-block;
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    padding: 2px 4px;
+    font-size: 13px;
+    border-radius: 4px;
+    color: white;
+}
+
+.status.pending {
+    background-color: #ff484229;
+    color: #b72136;
+}
+
+.status.paid {
+    background-color: #54d62c29;
+    color: #229a16;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgb(240, 242, 245);
+    padding-bottom: 10px;
+}
+
+.title {
+    font-size: 20px;
+    margin-top: 10px;
+    line-height: 1;
+}
+
+.subtitle {
+    font-size: 16px;
+}
+
+.date {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.date>p {
+    font-size: 13px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.row>p {
+    font-size: 14px;
+}
+
+.body {
+    margin-bottom: 25px
+}
+
+.progressContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 20px 0;
+}
+
+.progressContainer span {
+    font-size: 12px;
+}
+
+.progress {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
+
+.progressBar {
+    width: 100%;
+    height: 8px;
+    border-radius: 10px;
+    display: inline-block;
+    background-color: #F5F5F5;
+}
+
+.progressAdvance {
+    width: 20%;
+    height: 8px;
+    border-radius: 10px;
+    display: inline-block;
+    background-color: #ed6e27;
+    position: absolute;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button {
+    border: 1px solid rgba(91, 39, 237, 0.5);
+    color: #5b27ed;
+    box-shadow: none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 7px 21px;
+    text-transform: uppercase;
+    font-size: 14px;
 }

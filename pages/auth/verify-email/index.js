@@ -10,7 +10,6 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     if (query?.token) startSession(query?.token)
-    console.log({ query })
   }, [query?.token, startSession])
 
   if (loading) return <p>Loading...</p>

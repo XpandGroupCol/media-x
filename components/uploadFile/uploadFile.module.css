@@ -28,3 +28,22 @@
     border: 2px dotted #5b27ed;
     border-radius: 100%;
 }
+
+.imagenContainer{
+    position: relative;
+}
+
+.clearButton{
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    background-color: #f44336;
+    padding: 2px;
+    color: white;
+}
+
+.clearButton:hover{
+    background-color: #f44336;
+}
