@@ -1,7 +1,8 @@
 import useSWR from 'swr'
+import { BASE_URL } from 'utils/config'
 
 const useLists = () => {
-  const { data = {} } = useSWR(`${process.env.NEXT_PUBLIC_BASE_URL}/lists`)
+  const { data = {} } = useSWR(`${BASE_URL}/lists`)
 
   return {
     ...data

@@ -1,20 +1,38 @@
 
 import Button from 'components/button'
+import CompleteCompanyProfile from 'components/completeCompanyProfile'
 import Typography from 'components/typography'
+import useWompi from 'hooks/useWompi'
+
+import { useSession } from 'providers/sessionProvider'
+import { useState } from 'react'
+import { getCampaignById } from 'services/campaignServices'
+import { getFormatedNumber, parseDate } from 'utils/transformData'
 
 import styles from './summary.module.css'
-const Summary = () => {
-  return (
 
+const Summary = ({ campaign }) => {
+  const { session } = useSession()
+  const { wompi, disabled } = useWompi()
+
+  const [showModal, setShowModal] = useState(false)
+
+  const showprofileCompany = () => setShowModal(prev => !prev)
+
+  const handlePay = () => {
+    wompi()
+  }
+
+  return (
     <section className={styles.publishers}>
       <div className={styles.media}>
-        <Typography className={styles.title} align='right'>Orden de compra #5236236346</Typography>
+        <Typography className={styles.title} align='right'>Orden de compra #{campaign?.id}</Typography>
         <div className={styles.summary}>
           <div className={styles.firstSection}>
             <div className={styles.summaryHeader}>
-              <Typography><strong>Marca:</strong> Adidas</Typography>
-              <Typography><strong>Campaña:</strong> Ultraboost 21</Typography>
-              <Typography><strong>Fecha:</strong> 01/01/21 a 31/03/21</Typography>
+              <Typography><strong>Marca:</strong> {campaign?.brand}</Typography>
+              <Typography><strong>Campaña:</strong> {campaign?.name}</Typography>
+              <Typography><strong>Fecha:</strong> {parseDate(campaign?.startDate)} a {parseDate(campaign?.endDate)}</Typography>
             </div>
             <div className={styles.row}>
               <Typography color='secondary'>Impresiones</Typography>
@@ -57,7 +75,7 @@ const Summary = () => {
             </div>
             <div className={styles.total}>
               <Typography>TOTAL</Typography>
-              <Typography>$30.000.000</Typography>
+              <Typography>$ {getFormatedNumber(campaign.amount)}</Typography>
             </div>
           </div>
 
@@ -72,120 +90,69 @@ const Summary = () => {
               <thead>
                 <tr>
                   <th />
-                  <th><Typography align='left'>Ubicaciones</Typography></th>
                   <th><Typography align='left'>Formatos</Typography></th>
-                  <th><Typography align='left'>Share</Typography></th>
-                  <th><Typography align='left'>Valor</Typography></th>
-                  <th><Typography align='left'>Meta objetiva</Typography></th>
+                  <th><Typography align='center'>Dispositivos</Typography></th>
+                  <th><Typography align='center'>Share</Typography></th>
+                  <th><Typography align='right'>Valor</Typography></th>
+                  <th><Typography align='right'>Meta objetiva</Typography></th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='12%'> El colombiano</td>
-                  <td width='14%'> El colombiano</td>
-                  <td width='14%'>
-                    El colombiano
-                  </td>
-                </tr>
-                <tr>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='12%'> El colombiano</td>
-                  <td width='14%'> El colombiano</td>
-                  <td width='14%'>
-                    El colombiano
-                  </td>
-                </tr>
-                <tr>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='12%'> El colombiano</td>
-                  <td width='14%'> El colombiano</td>
-                  <td width='14%'>
-                    El colombiano
-                  </td>
-                </tr>
-                <tr>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='12%'> El colombiano</td>
-                  <td width='14%'> El colombiano</td>
-                  <td width='14%'>
-                    El colombiano
-                  </td>
-                </tr>
-                <tr>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='12%'> El colombiano</td>
-                  <td width='14%'> El colombiano</td>
-                  <td width='14%'>
-                    El colombiano
-                  </td>
-                </tr>
-                <tr>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='20%'>
-                    El colombiano
-                  </td>
-                  <td width='12%'> El colombiano</td>
-                  <td width='14%'> El colombiano</td>
-                  <td width='14%'>
-                    El colombiano
-                  </td>
-                </tr>
+                {campaign?.publishers?.map(({ publisherId, publisher, device, objectiveGoal, share, format, value }) => (
+                  <tr key={publisherId}>
+                    <td width='25%'>
+                      {publisher}
+                    </td>
+                    <td width='30%'>
+                      {format.map(({ label }) => label).join(' - ')}
+                    </td>
+                    <td width='15%' style={{ textAlign: 'center' }}>
+                      {device}
+                    </td>
+                    <td width='6%' style={{ textAlign: 'center' }}>{share}</td>
+                    <td width='12%' style={{ textAlign: 'right' }}>$ {getFormatedNumber(value)}</td>
+                    <td width='12%' style={{ textAlign: 'right' }}>
+                      {getFormatedNumber(objectiveGoal)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-          <Button size='large' variant='contained'>Ver Campañas</Button>
+          <Button variant='outlined'>Ver Campañas</Button>
+          {session?.checkRut || true
+            ? <Button onClick={handlePay} disabled={disabled}>Paga con wompi</Button>
+            : (
+              <>
+                <CompleteCompanyProfile open={showModal} onClose={showprofileCompany} />
+                <Button onClick={showprofileCompany}>Completar el perfil de empresa</Button>
+              </>)}
         </div>
       </div>
     </section>
-
   )
+}
+
+export async function getServerSideProps ({ req, query }) {
+  const user = req.cookies?.user || null
+  const token = user ? JSON.parse(user)?.token : null
+
+  if (!query.id || !token) {
+    return {
+      redirect: {
+        destination: '/campaigns',
+        permanent: false
+      }
+    }
+  }
+
+  try {
+    const { data } = await getCampaignById(query.id, token)
+    return { props: { campaign: data } }
+  } catch (e) {
+    return { props: { campaign: null } }
+  }
 }
 
 export default Summary

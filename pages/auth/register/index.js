@@ -25,7 +25,7 @@ const Register = () => {
   }
 
   return (
-    <AuthLayout onSubmit={handleSubmit(onSubmint)} title='cEso si rea tu cuenta'>
+    <AuthLayout onSubmit={handleSubmit(onSubmint)} title='crea tu cuenta'>
       <div className={styles.boxForm}>
         <ControllerField
           name='name'

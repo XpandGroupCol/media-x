@@ -19,7 +19,7 @@ import { defaultValues, schema } from 'schemas/campaign'
 import styles from './newCampaign.module.css'
 
 const NewCampaign = () => {
-  const { objectives = [], sectors = [], locations = [], sex = [], ages = [] } = useLists()
+  const { targets = [], sectors = [], locations = [], sex = [], ages = [] } = useLists()
 
   const [preview, setPreview] = useState(null)
 
@@ -32,13 +32,13 @@ const NewCampaign = () => {
 
   const values = getValues()
 
-  const onSubmit = ({ locations, ages, sector, objective, sex, currency, ...restOfValues }) => {
+  const onSubmit = ({ locations, ages, sector, target, sex, currency, ...restOfValues }) => {
     const payload = {
       ...restOfValues,
       locations: locations.map(({ id }) => id),
       ages: ages.map(({ id }) => id),
       sector: sector?.id,
-      objective: objective?.id,
+      target: target?.id,
       sex: sex?.id,
       amount: currency
     }
@@ -54,45 +54,11 @@ const NewCampaign = () => {
   }
 
   const handleChangeStartDate = (date) => {
-    console.log(isBefore(values.endDate, date))
     if (values.endDate && isBefore(values.endDate, date)) {
       setValue('endDate', null, { shouldValidate: true })
     }
     setValue('startDate', date)
   }
-
-  // const handleOpen = () => {
-  //   const checkout = new window.WidgetCheckout({
-  //     currency: 'COP',
-  //     amountInCents: 2490000,
-  //     reference: 'AD002901221222444',
-  //     publicKey: 'pub_test_8FjSXZnJcKhQ2WirfOJOMb0JCNz5vjqg',
-  //     taxInCents: { // Optional
-  //       vat: 1900,
-  //       consumption: 800
-  //     },
-  //     customerData: { // Optional
-  //       email: 'lola@gmail.com',
-  //       fullName: 'Lola Flores',
-  //       phoneNumber: '3040777777',
-  //       phoneNumberPrefix: '+57',
-  //       legalId: '123456789',
-  //       legalIdType: 'CC'
-  //     },
-  //     shippingAddress: { // Optional
-  //       addressLine1: 'Calle 123 #4-5',
-  //       city: 'Bogota',
-  //       phoneNumber: '3019444444',
-  //       region: 'Cundinamarca',
-  //       country: 'CO'
-  //     }
-  //   })
-  //   checkout.open(function (result) {
-  //     const transaction = result.transaction
-  //     console.log('Transaction ID: ', transaction.id)
-  //     console.log('Transaction object: ', transaction)
-  //   })
-  // }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -151,13 +117,13 @@ const NewCampaign = () => {
       />
 
       <ControllerField
-        name='objective'
+        name='target'
         label='Objetivo Publicitario'
         control={control}
         element={Autocomplete}
-        options={objectives}
-        error={Boolean(errors?.objective?.message)}
-        helperText={errors?.objective?.message}
+        options={targets}
+        error={Boolean(errors?.target?.message)}
+        helperText={errors?.target?.message}
       />
 
       <ControllerField

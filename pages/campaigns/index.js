@@ -9,16 +9,20 @@ import noImage from 'public/images/no-photo-available.png'
 import styles from './campaigns.module.css'
 import Link from 'next/link'
 import classNames from 'classnames'
-import { CAMPAING_STATUS } from 'utils/config'
+import { BASE_URL, CAMPAING_STATUS } from 'utils/config'
 
 const parseDate = (date) => date ? format(new Date(date), 'dd/MM/yyyy') : ''
 
 const Site = () => {
-  const { data = {}, error } = useSWR(`${process.env.NEXT_PUBLIC_BASE_URL}/campaigns/byUser`)
+  const { data = {}, error } = useSWR(`${BASE_URL}/campaigns/byUser`)
 
-  if (!data?.data && !error) return <p>cargando....</p>
+  const { data: campaigns } = data
 
-  if (data?.data.length === 0) return <p>No hay datos</p>
+  if (!campaigns && !error) return <p>cargando....</p>
+
+  if (error) return <p>error</p>
+
+  if (campaigns.length === 0) return <p>No hay datos</p>
 
   return (
     <div>
@@ -29,8 +33,8 @@ const Site = () => {
       </div>
       <section className={styles.campaigns}>
         {data?.data?.map(({ id, brand, name, startDate, endDate, logo = null, status }, index) => {
-          const isPayment = status === 'paid'
-          const href = isPayment ? '/new-campaign/summary' : '/new-campaign/publishers'
+          const isDraft = status === 'draft'
+          const href = isDraft ? '/new-campaign/publishers' : '/new-campaign/summary'
           const percentage = (index + 1) * 20
           return (
             <div className={styles.card} key={id}>
@@ -71,7 +75,7 @@ const Site = () => {
               </div>
               <footer className={styles.footer}>
                 <Link href={`${href}/${id}`}>
-                  <a className={styles.button}>{isPayment ? 'Ver detalle' : 'Completar campaña'}</a>
+                  <a className={styles.button}>{isDraft ? 'Completar campaña' : 'Resumen'}</a>
                 </Link>
               </footer>
             </div>

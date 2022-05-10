@@ -99,7 +99,6 @@ const Layout = ({ children }) => {
             <Divider />
             <MenuItem onClick={logout}>
               <LogoutIcon fontSize='small' sx={{ marginRight: '10px' }} />
-
               Cerrar sesion
             </MenuItem>
           </Menu>

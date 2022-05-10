@@ -8,9 +8,9 @@ import Button from 'components/button'
 import Input from 'components/input'
 import ControllerField from 'components/ControllerField'
 
-import useSignUp from 'hooks/useSignUp'
 import { forgotInitValues, forgotSchema } from 'schemas/auth'
 import styles from '../auth.module.css'
+import useForgotpassword from 'hooks/useForgotpassword'
 
 const ForgotPassword = () => {
   const { formState: { errors }, handleSubmit, control } = useForm({
@@ -18,10 +18,10 @@ const ForgotPassword = () => {
     resolver: yupResolver(forgotSchema)
   })
 
-  const { register, loading } = useSignUp()
+  const { forgot, loading } = useForgotpassword()
 
   const onSubmint = (data) => {
-    register(data)
+    forgot(data)
   }
 
   return (

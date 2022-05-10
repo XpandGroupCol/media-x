@@ -14,12 +14,16 @@ import useLists from 'hooks/useLists'
 import { useFieldArray, useForm } from 'react-hook-form'
 import ControllerField from 'components/ControllerField'
 import CurrencyInput from 'components/currencyInput'
+import { defaultValues, publisherSchema } from 'schemas/publishers'
+import { yupResolver } from '@hookform/resolvers/yup'
+import useAddPublishers from 'hooks/useAddPublishers'
+import { getCampaignById } from 'services/campaignServices'
 
 const getRow = ({ id, label, device, formats }) => ({
   publisherId: id,
   publisher: label,
   device: device?.label,
-  fotmat: [],
+  format: [],
   share: '',
   value: '',
   objectiveGoal: '',
@@ -28,36 +32,35 @@ const getRow = ({ id, label, device, formats }) => ({
 
 const Publishers = ({ campaign }) => {
   const [showSummary, setShowSummary] = useState(false)
-  const { register, control, handleSubmit, reset, trigger, setError, setValue } = useForm({
-    // defaultValues: {}; you can populate the fields by this attribute
+  const { control, handleSubmit, getValues, formState: { errors } } = useForm({
+    defaultValues,
+    resolver: yupResolver(publisherSchema)
   })
-  const { fields = [], remove, append, replace, update } = useFieldArray({
+  const { fields = [], remove, append, replace } = useFieldArray({
     control,
     name: 'publishers'
   })
-  const router = useRouter()
-  const { ages = [], devices = [], publisher = [], sex = [], locations = [] } = useLists()
 
-  const [filterLocation, setFilterLocation] = useState(null)
-  const [filterAge, setFilterAge] = useState(null)
-  const [filterSex, setFilterSex] = useState(null)
+  const { publisher = [] } = useLists()
 
   const [rows, setRows] = useState([])
 
+  const { loading, savePublishers } = useAddPublishers()
+
   const onSubmit = (values) => {
-    console.log({ values })
+    savePublishers(campaign?.id, values)
   }
 
   const handleOnChangePublisher = (values) => {
     const valuesLength = values.length
     if (valuesLength === 0) {
-      replace(values)
+      replace(JSON.parse(JSON.stringify(values)))
       setRows(values)
       return
     }
 
     if (valuesLength > fields.length) {
-      append(getRow(values[valuesLength - 1]))
+      append(JSON.parse(JSON.stringify(getRow(values[valuesLength - 1]))))
     } else {
       const el = fields.findIndex(({ publisherId }) => !values.some(({ id }) => id === publisherId))
       remove(el)
@@ -70,26 +73,74 @@ const Publishers = ({ campaign }) => {
     remove(index)
   }
 
-  const handleOnChangeFormat = (index) => (formats) => {
-    let total = 0
-    let subTotal = 0
-    const devices = []
+  const handleChangeValor = () => {
+    const values = getValues()
 
-    formats.forEach((format) => {
-      const { device, pricePerUnit, biddingModel } = format
-      if (biddingModel === 'CPM') {
-        subTotal += pricePerUnit
-        total += pricePerUnit * 1000
-      } else {
-        subTotal += pricePerUnit
-        total += pricePerUnit
-      }
+    const data = JSON.parse(JSON.stringify(values.publishers))
 
-      devices.push(device)
-    })
+    const updateData = data.reduce((acc, current) => {
+      let goal = 0
+      let share = 0
+      const { format, value } = current
 
-    update(index, { ...fields[index], device: devices.join('-'), value: subTotal, objectiveGoal: total, fotmat: formats })
+      // se debe mejorar
+      const parseValue = parseFloat((parseFloat(value) / format.length).toFixed(2))
+      format.forEach(({ biddingModel, pricePerUnit }) => {
+        if (!parseValue) return
+
+        share = (value * 100) / campaign.amount
+
+        const base = (parseValue / pricePerUnit)
+        goal += biddingModel === 'CPM' ? base * 1000 : base
+      })
+
+      return [...acc, {
+        ...current,
+        objectiveGoal: goal > 0 ? goal.toFixed(2) : 0,
+        share: `${share}%`
+      }]
+    }, [])
+
+    replace(updateData)
   }
+
+  const handleChangeFormats = () => {
+    const values = getValues()
+
+    const data = JSON.parse(JSON.stringify(values.publishers))
+
+    const updateData = data.reduce((acc, current) => {
+      let goal = 0
+      let share = 0
+      const devices = []
+      const { format, value } = current
+
+      // se debe mejorar
+      const parseValue = parseFloat((parseFloat(value) / format.length).toFixed(2))
+
+      format.forEach(({ biddingModel, pricePerUnit, device }) => {
+        if (!devices.includes(device)) { devices.push(device) }
+
+        if (!parseValue) return
+
+        share = (value * 100) / campaign.amount
+
+        const base = (parseValue / pricePerUnit)
+        goal += biddingModel === 'CPM' ? base * 1000 : base
+      })
+
+      return [...acc, {
+        ...current,
+        objectiveGoal: goal > 0 ? goal.toFixed(2) : 0,
+        share: `${share}%`,
+        device: devices.join('-')
+      }]
+    }, [])
+
+    replace(updateData)
+  }
+
+  if (!campaign) return <p>error</p>
 
   return (
     <section className={styles.publishers}>
@@ -105,27 +156,6 @@ const Publishers = ({ campaign }) => {
             multiple
             value={rows}
             onChange={handleOnChangePublisher}
-          />
-          <Autocomplete
-            disablePortal
-            id='combo-box-demo'
-            options={locations}
-            fullWidth
-            label='Lugar'
-          />
-          <Autocomplete
-            disablePortal
-            id='combo-box-demo'
-            options={ages}
-            fullWidth
-            label='Edad'
-          />
-          <Autocomplete
-            disablePortal
-            id='combo-box-demo'
-            options={sex}
-            fullWidth
-            label='Sexo'
           />
         </div>
         <Typography className={styles.subtitle} align='center'>Selecciona tu segmentación inicial para la campaña</Typography>
@@ -167,7 +197,7 @@ const Publishers = ({ campaign }) => {
                       <td width='20%'>
                         <ControllerField
                           control={control}
-                          name={`publishers.${index}.fotmat`}
+                          name={`publishers.${index}.format`}
                           id='format'
                           options={formats}
                           fullWidth
@@ -175,7 +205,7 @@ const Publishers = ({ campaign }) => {
                           label='Formatos'
                           multiple
                           element={Autocomplete}
-                          onChange={handleOnChangeFormat(index)}
+                          onBlur={handleChangeFormats}
                         />
                       </td>
                       <td width='15%'>
@@ -205,6 +235,9 @@ const Publishers = ({ campaign }) => {
                           size='small'
                           label='Share'
                           element={Input}
+                          inputProps={
+                            { readOnly: true }
+                          }
                         />
                       </td>
                       <td width='14%'>
@@ -217,6 +250,7 @@ const Publishers = ({ campaign }) => {
                           size='small'
                           label='Valor'
                           element={CurrencyInput}
+                          onBlur={handleChangeValor}
                         />
                       </td>
                       <td width='14%'>
@@ -229,7 +263,10 @@ const Publishers = ({ campaign }) => {
                           fullWidth
                           size='small'
                           label='Meta objetiva'
-                          element={CurrencyInput}
+                          element={Input}
+                          inputProps={
+                            { readOnly: true }
+                          }
                         />
                       </td>
                       <td width='4%'>
@@ -247,7 +284,7 @@ const Publishers = ({ campaign }) => {
             <Input size='small' label='url' />
             <Button variant='outlined'>Subir multimedia</Button>
           </div>
-          <Button size='large' variant='contained' onClick={handleSubmit(onSubmit)}>Continuar</Button>
+          <Button size='large' variant='contained' onClick={handleSubmit(onSubmit)} loading={loading}>Continuar</Button>
         </form>
       </div>
       <div className={styles.summary}>
@@ -300,12 +337,33 @@ const Publishers = ({ campaign }) => {
         </div>
         <div className={classNames(styles.summaryRow, styles.total)}>
           <Typography>TOTAL</Typography>
-          <Typography>$30.000.000</Typography>
+          <Typography>{campaign.amount}</Typography>
         </div>
       </div>
     </section>
 
   )
+}
+
+export async function getServerSideProps ({ req, query }) {
+  const user = req.cookies?.user || null
+  const token = user ? JSON.parse(user)?.token : null
+
+  if (!query.id || !token) {
+    return {
+      redirect: {
+        destination: '/campaigns',
+        permanent: false
+      }
+    }
+  }
+
+  try {
+    const { data } = await getCampaignById(query.id, token)
+    return { props: { campaign: data } }
+  } catch (e) {
+    return { props: { campaign: null } }
+  }
 }
 
 export default Publishers

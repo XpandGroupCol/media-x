@@ -5,7 +5,7 @@ export const defaultValues = {
   name: '',
   startDate: new Date(),
   endDate: null,
-  objective: null,
+  target: null,
   sector: null,
   currency: null
 }
@@ -15,7 +15,7 @@ export const schema = yup.object({
   name: yup.string().required('Campaña es requerido'),
   startDate: yup.date().required('Fecha inicio es requerido').nullable(),
   endDate: yup.date().required('Fecha final es requerido').min(yup.ref('startDate'), 'Fecha final no puede ser menor que la fecha inicio').nullable(),
-  objective: yup.object().required('Obejtivo es requerido').nullable(),
+  target: yup.object().required('Obejtivo es requerido').nullable(),
   sector: yup.object().required('Obejtivo es requerido').nullable(),
   currency: yup.number().required('Presupuesto es requerido').nullable()
 }).required()
