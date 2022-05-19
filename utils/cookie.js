@@ -2,7 +2,7 @@ import jsCookie from 'js-cookie'
 
 export const getAuth = () => {
   const user = jsCookie.get('user')
-  return user ? JSON.parse(user)?.token : null
+  return user ? JSON.parse(user)?.accessToken : null
 }
 
 export const getSession = () => {

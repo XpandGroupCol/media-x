@@ -13,7 +13,7 @@ const useNewCamapaign = () => {
       setLoading(true)
       const { data: id } = await newCampaign(payload)
       setLoading(false)
-      router.push(`/new-campaign/publishers/${id}`)
+      router.push(`/new-campaign/${id}/publishers`)
     } catch (e) {
       setLoading(false)
       notify({ message: 'Error mensaje', type: 'error' })

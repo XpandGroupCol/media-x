@@ -1,0 +1,34 @@
+.inputFile {
+    display: none !important;
+ }
+ 
+ .label{
+     display: flex;
+     min-width: 0;
+     width: 100%;
+     height: 57px;
+     border: 1px solid #e2e2e1;
+     border-radius: 4px;
+     font-size: 12px;
+     padding: 12px 8px;
+     flex: 1;
+     align-items: center;
+     justify-content: space-between;
+     font-weight: bold;
+     color: rgba(0, 0, 0, 0.6);
+ }
+ 
+ .value{
+     font-size: 14px;
+     margin-left: 4px;
+     width: 100px;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     display: inline-block;
+ }
+ 
+ .placeholder{
+     display: flex;
+     align-items: center;
+ }

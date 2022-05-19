@@ -34,7 +34,7 @@ const Site = () => {
       <section className={styles.campaigns}>
         {data?.data?.map(({ id, brand, name, startDate, endDate, logo = null, status }, index) => {
           const isDraft = status === 'draft'
-          const href = isDraft ? '/new-campaign/publishers' : '/new-campaign/summary'
+          const href = isDraft ? `/new-campaign/${id}/publishers` : `/new-campaign/${id}/summary`
           const percentage = (index + 1) * 20
           return (
             <div className={styles.card} key={id}>
@@ -74,7 +74,7 @@ const Site = () => {
 
               </div>
               <footer className={styles.footer}>
-                <Link href={`${href}/${id}`}>
+                <Link href={href}>
                   <a className={styles.button}>{isDraft ? 'Completar campaña' : 'Resumen'}</a>
                 </Link>
               </footer>

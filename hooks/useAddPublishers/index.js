@@ -17,7 +17,7 @@ const useAddPublishers = () => {
       if (!campaignId) return notify({ message: 'Error mensaje', type: 'error' })
       setLoading(false)
 
-      router.replace(`/new-campaign/summary/${campaignId}`)
+      router.replace(`/new-campaign/${campaignId}/summary`)
     } catch (error) {
       setLoading(false)
       notify({ message: 'Error mensaje', type: 'error' })

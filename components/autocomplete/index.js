@@ -22,11 +22,10 @@ const Autocomplete = forwardRef(({
     fullWidth
     limitTags={1}
     renderTags={(values) => {
-      const [first, ...rest] = values
-      if (first) {
+      if (values.length) {
         return (
-          <Typography component='span'>{first.label}
-            {rest.length > 0 && <Typography component='span'> + {rest.length}</Typography>}
+          <Typography component='span'>
+            {values.length > 1 ? 'varios seleccionados' : value[0].label}
           </Typography>
         )
       }

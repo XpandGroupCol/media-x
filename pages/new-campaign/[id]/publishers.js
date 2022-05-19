@@ -8,8 +8,7 @@ import styles from './publishers.module.css'
 import CloseIcon from '@mui/icons-material/Close'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import classNames from 'classnames'
-import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useMemo, useState } from 'react'
 import useLists from 'hooks/useLists'
 import { useFieldArray, useForm } from 'react-hook-form'
 import ControllerField from 'components/ControllerField'
@@ -18,8 +17,10 @@ import { defaultValues, publisherSchema } from 'schemas/publishers'
 import { yupResolver } from '@hookform/resolvers/yup'
 import useAddPublishers from 'hooks/useAddPublishers'
 import { getCampaignById } from 'services/campaignServices'
+import { getFormatedNumber } from 'utils/transformData'
+import { useNotification } from 'providers/notificationProvider'
 
-const getRow = ({ id, label, device, formats }) => ({
+const getRow = ({ id, label, device, formats, category }) => ({
   publisherId: id,
   publisher: label,
   device: device?.label,
@@ -27,8 +28,17 @@ const getRow = ({ id, label, device, formats }) => ({
   share: '',
   value: '',
   objectiveGoal: '',
-  formats
+  formats,
+  category
 })
+
+const BASE = 0.15
+
+const getComision = (price) => BASE * price || 0
+
+const getAmount = (price) => (price - BASE * price || 0)
+
+const getIva = (price) => price * 0.19
 
 const Publishers = ({ campaign }) => {
   const [showSummary, setShowSummary] = useState(false)
@@ -36,9 +46,18 @@ const Publishers = ({ campaign }) => {
     defaultValues,
     resolver: yupResolver(publisherSchema)
   })
-  const { fields = [], remove, append, replace } = useFieldArray({
+
+  const { fields = [], remove, append, replace, update } = useFieldArray({
     control,
     name: 'publishers'
+  })
+
+  const [state, setState] = useState({
+    plataformas: 0,
+    medios: 0,
+    impresiones: 0,
+    reproducciones: 0,
+    clicks: 0
   })
 
   const { publisher = [] } = useLists()
@@ -46,8 +65,16 @@ const Publishers = ({ campaign }) => {
   const [rows, setRows] = useState([])
 
   const { loading, savePublishers } = useAddPublishers()
+  const { notify } = useNotification()
+
+  const ammount = useMemo(() => getAmount(campaign?.amount), [campaign])
+
+  const category = useMemo(() => campaign?.target?.category, [])
 
   const onSubmit = (values) => {
+    const { publishers } = getValues()
+    const totalValues = publishers.reduce((acc, { value }) => acc + parseFloat(value), 0)
+    if (totalValues < ammount) return notify({ type: 'info', message: `El valor  de los medios ($${getFormatedNumber(totalValues)}) es mejor a la inversion que quieres realizar $${getFormatedNumber(ammount)}` })
     savePublishers(campaign?.id, values)
   }
 
@@ -73,71 +100,96 @@ const Publishers = ({ campaign }) => {
     remove(index)
   }
 
-  const handleChangeValor = () => {
+  const handleChangeValor = (index) => () => {
     const values = getValues()
+    const { publishers } = values
+    const currentRow = publishers[index]
 
-    const data = JSON.parse(JSON.stringify(values.publishers))
+    const totalValues = publishers.reduce((acc, { value }) => acc + parseFloat(value), 0)
+    const minIversion = currentRow?.format?.reduce((acc, { pricePerUnit }) => acc + parseFloat(pricePerUnit), 0)
 
-    const updateData = data.reduce((acc, current) => {
-      let goal = 0
-      let share = 0
-      const { format, value } = current
+    const lastValues = totalValues - parseFloat(currentRow.value)
+    const maxValue = ammount - lastValues
 
-      // se debe mejorar
-      const parseValue = parseFloat((parseFloat(value) / format.length).toFixed(2))
-      format.forEach(({ biddingModel, pricePerUnit }) => {
-        if (!parseValue) return
+    if (currentRow.value && currentRow.value < minIversion) {
+      notify({ type: 'info', message: `La inversion  minima para los formatos seleccionados debe ser $${getFormatedNumber(minIversion)}` })
+      update(index, { ...currentRow, value: '' })
+      return
+    }
 
-        share = (value * 100) / campaign.amount
+    if (totalValues > ammount) {
+      notify({ type: 'info', message: `El valor maximo disponible para el medio es de $${getFormatedNumber(maxValue)}` })
+      update(index, { ...currentRow, value: '' })
+      return
+    }
 
-        const base = (parseValue / pricePerUnit)
-        goal += biddingModel === 'CPM' ? base * 1000 : base
-      })
+    let goal = 0
+    let share = 0
 
-      return [...acc, {
-        ...current,
-        objectiveGoal: goal > 0 ? goal.toFixed(2) : 0,
-        share: `${share}%`
-      }]
-    }, [])
+    const parseValue = parseFloat((parseFloat(currentRow.value) / currentRow.format.length).toFixed(2))
+    currentRow?.format.forEach(({ biddingModel, pricePerUnit }) => {
+      const base = (parseValue / pricePerUnit)
+      share = (currentRow.value * 100) / ammount
+      goal += biddingModel === 'CPM' ? base * 1000 : base
+    })
 
-    replace(updateData)
+    update(index, { ...currentRow, objectiveGoal: goal > 0 ? goal.toFixed(2) : 0, share: `${share.toFixed(2)}%` })
+
+    updatedCard()
   }
 
-  const handleChangeFormats = () => {
+  const updatedCard = () => {
     const values = getValues()
+    let plataformas = 0
+    let medios = 0
 
-    const data = JSON.parse(JSON.stringify(values.publishers))
+    values.publishers.forEach(({ value, category }) => {
+      if (category === 'platform') {
+        plataformas += parseFloat(value || 0)
+      } else {
+        medios += parseFloat(value || 0)
+      }
+    })
 
-    const updateData = data.reduce((acc, current) => {
-      let goal = 0
-      let share = 0
-      const devices = []
-      const { format, value } = current
+    setState(prev => ({ ...prev, plataformas, medios }))
+  }
 
-      // se debe mejorar
-      const parseValue = parseFloat((parseFloat(value) / format.length).toFixed(2))
+  const handleChangeFormats = (index) => () => {
+    const values = getValues()
+    const { publishers } = values
 
-      format.forEach(({ biddingModel, pricePerUnit, device }) => {
-        if (!devices.includes(device)) { devices.push(device) }
+    const devices = []
+    const currentRow = publishers[index]
 
-        if (!parseValue) return
+    const minIversion = currentRow?.format?.reduce((acc, { pricePerUnit }) => acc + parseFloat(pricePerUnit), 0)
+    const value = parseFloat(currentRow.value)
 
-        share = (value * 100) / campaign.amount
+    const parseValue = parseFloat((parseFloat(currentRow.value) / currentRow.format.length).toFixed(2))
 
-        const base = (parseValue / pricePerUnit)
-        goal += biddingModel === 'CPM' ? base * 1000 : base
-      })
+    if (value && minIversion > value) {
+      notify({ type: 'info', message: `La inversion  minima para los formatos seleccionados debe ser $${getFormatedNumber(minIversion)}` })
+      const format = currentRow?.format.slice(0, currentRow?.format.length - 1)
+      update(index, { ...currentRow, format: [...format] })
+      return
+    }
+    let goal = 0
+    let share = 0
 
-      return [...acc, {
-        ...current,
-        objectiveGoal: goal > 0 ? goal.toFixed(2) : 0,
-        share: `${share}%`,
-        device: devices.join('-')
-      }]
-    }, [])
+    currentRow?.format?.forEach(({ biddingModel, pricePerUnit, device, ...res }) => {
+      if (!devices.includes(device)) devices.push(device)
+      const base = (parseValue / pricePerUnit)
+      share = (currentRow.value * 100) / ammount
+      goal += biddingModel === 'CPM' ? base * 1000 : base
+    })
 
-    replace(updateData)
+    update(index, {
+      ...currentRow,
+      device: devices.join('-'),
+      objectiveGoal: goal > 0 ? goal.toFixed(2) : 0,
+      share: `${share.toFixed(2)}%`
+    })
+
+    updatedCard()
   }
 
   if (!campaign) return <p>error</p>
@@ -205,7 +257,7 @@ const Publishers = ({ campaign }) => {
                           label='Formatos'
                           multiple
                           element={Autocomplete}
-                          onBlur={handleChangeFormats}
+                          onBlur={handleChangeFormats(index)}
                         />
                       </td>
                       <td width='15%'>
@@ -250,7 +302,7 @@ const Publishers = ({ campaign }) => {
                           size='small'
                           label='Valor'
                           element={CurrencyInput}
-                          onBlur={handleChangeValor}
+                          onBlur={handleChangeValor(index)}
                         />
                       </td>
                       <td width='14%'>
@@ -299,11 +351,11 @@ const Publishers = ({ campaign }) => {
         <div className={classNames(styles.content, { [styles.showContent]: showSummary })}>
           <div className={styles.summaryRow}>
             <Typography>Inversión en plataformas digitales</Typography>
-            <Typography component='strong'>$6.875.477</Typography>
+            <Typography component='strong'>${getFormatedNumber(state.plataformas)}</Typography>
           </div>
           <div className={styles.summaryRow}>
             <Typography>Inversión en medios masivos (digital)</Typography>
-            <Typography component='strong'>$6.875.477</Typography>
+            <Typography component='strong'>${getFormatedNumber(state.medios)}</Typography>
           </div>
           <div className={styles.summaryRow}>
             <Typography>Moneda</Typography>
@@ -315,29 +367,29 @@ const Publishers = ({ campaign }) => {
           </div>
           <div className={styles.summaryRow}>
             <Typography>Comisión plataforma tecnológica</Typography>
-            <Typography component='strong'> $2.291.826</Typography>
+            <Typography component='strong'> ${getFormatedNumber(getComision(campaign.amount))}</Typography>
           </div>
           <div className={classNames(styles.summaryRow, styles.mb20)}>
             <Typography>IVA</Typography>
-            <Typography component='strong'>$4.789.916</Typography>
+            <Typography component='strong'>${getFormatedNumber(getIva(campaign.amount))}</Typography>
           </div>
           <div className={styles.summaryRow}>
             <Typography color='secondary'>Impresiones</Typography>
-            <Typography color='secondary'>1.538.797</Typography>
+            <Typography color='secondary'>{getFormatedNumber(state.impresiones)}</Typography>
           </div>
           <div className={styles.summaryRow}>
             <Typography color='secondary'>Reproducciones</Typography>
-            <Typography color='secondary'>143.239</Typography>
+            <Typography color='secondary'>{getFormatedNumber(state.reproducciones)}</Typography>
           </div>
           <div className={classNames(styles.summaryRow, styles.mb20)}>
             <Typography color='secondary'>Clicks</Typography>
-            <Typography color='secondary'>0</Typography>
+            <Typography color='secondary'>{getFormatedNumber(state.clicks)}</Typography>
           </div>
 
         </div>
         <div className={classNames(styles.summaryRow, styles.total)}>
           <Typography>TOTAL</Typography>
-          <Typography>{campaign.amount}</Typography>
+          <Typography>${getFormatedNumber(campaign.amount)}</Typography>
         </div>
       </div>
     </section>
@@ -347,7 +399,7 @@ const Publishers = ({ campaign }) => {
 
 export async function getServerSideProps ({ req, query }) {
   const user = req.cookies?.user || null
-  const token = user ? JSON.parse(user)?.token : null
+  const token = user ? JSON.parse(user)?.accessToken : null
 
   if (!query.id || !token) {
     return {

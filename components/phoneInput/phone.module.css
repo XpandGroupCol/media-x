@@ -1,0 +1,30 @@
+.input >  div[class='special-label'] {
+    background-color: transparent;
+    font-size: 10px;
+    font-weight: 500;
+    top: 6px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.input .inputClass{
+    width: inherit;
+    border: 1px solid #e2e2e1;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 22.5px 14px 14.5px 58px;
+}
+
+.input .inputClass:hover{
+    border: 1px solid #e2e2e1;
+
+}
+
+.input .inputClass:focus{
+    border: 1px solid #5b27ed;
+    box-shadow: none;
+}
+
+
+.inputClass + div{
+    top: 4px !important;
+}

@@ -2,13 +2,15 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Button from 'components/button'
 import ControllerField from 'components/ControllerField'
 import Input from 'components/input'
+import inputFile from 'components/inputFile'
+import PhoneInput from 'components/phoneInput'
 import Typography from 'components/typography'
 import useCompanyProfile from 'hooks/useCompanyProfile'
 import { useForm } from 'react-hook-form'
 import { companyValues, companydSchema } from 'schemas/profile'
 
 const CompanyForm = ({ company = companyValues }) => {
-  const { formState: { errors }, handleSubmit, control } = useForm({
+  const { formState: { errors }, handleSubmit, control, setValue } = useForm({
     defaultValues: { ...company },
     resolver: yupResolver(companydSchema)
   })
@@ -16,7 +18,13 @@ const CompanyForm = ({ company = companyValues }) => {
   const { loading, updateCompanyProfile } = useCompanyProfile()
 
   const onSubmit = (values) => {
-    updateCompanyProfile(values)
+    const body = new window.FormData()
+
+    Object.entries(values).forEach(([key, value]) => {
+      body.append(key, value ?? '')
+    })
+
+    updateCompanyProfile(body)
   }
 
   return (
@@ -44,8 +52,11 @@ const CompanyForm = ({ company = companyValues }) => {
         name='phone'
         label='Telefono'
         control={control}
-        element={Input}
-        size='small'
+        element={PhoneInput}
+        onChange={({ phone, dialCode }) => {
+          setValue('phone', phone, { shouldValidate: true })
+          setValue('phonePrefixed', dialCode, { shouldValidate: true })
+        }}
         error={Boolean(errors?.phone?.message)}
         helperText={errors?.phone?.message}
       />
@@ -67,6 +78,17 @@ const CompanyForm = ({ company = companyValues }) => {
         error={Boolean(errors?.companyEmail?.message)}
         helperText={errors?.companyEmail?.message}
       />
+      {company?.rut
+        ? <a>Ver rut</a>
+        : <ControllerField
+            name='rut'
+            label='subir el rut'
+            control={control}
+            element={inputFile}
+            size='small'
+            error={Boolean(errors?.rut?.message)}
+            helperText={errors?.rut?.message}
+          />}
       <Button loading={loading} type='submit'>
         Guardar
       </Button>

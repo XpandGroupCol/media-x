@@ -45,3 +45,18 @@ export const addPublishers = async ({ id, publishers }) => {
     return Promise.reject(e)
   }
 }
+
+export const addPayment = async (id, payment) => {
+  try {
+    const { data } = await axios(`${BASE_URL}/campaigns/payment/${id}`, {
+      method: 'PUT',
+      data: payment,
+      headers: {
+        Authorization: `Bearer ${getAuth()}`
+      }
+    })
+    return data
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}

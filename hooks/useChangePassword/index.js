@@ -18,7 +18,6 @@ const useChangePassword = () => {
       notify({ message: 'Su contraseña ha sido actualizada correctamente', type: 'success' })
       isAuth && router.replace('/auth/login')
     } catch (error) {
-      console.log({ error })
       setLoading(false)
       notify({ message: 'Error mensaje', type: 'error' })
     }

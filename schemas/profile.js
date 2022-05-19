@@ -13,7 +13,8 @@ export const companyValues = {
   nit: '',
   phone: '',
   address: '',
-  companyEmail: ''
+  companyEmail: '',
+  phonePrefixed: ''
 }
 
 export const companydSchema = yup.object({
@@ -21,5 +22,6 @@ export const companydSchema = yup.object({
   nit: yup.string().required('Nit es requerido'),
   phone: yup.string().required('Telefono es requerido'),
   address: yup.string().required('Direccion es requerido'),
-  companyEmail: yup.string().required('correo electronico es requerido')
+  companyEmail: yup.string().required('correo electronico es requerido'),
+  phonePrefixed: yup.string()
 }).required()
