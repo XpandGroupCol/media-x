@@ -15,7 +15,7 @@ const UploadFile = ({ setPreview, preview }) => {
       reader.onloadend = () => {
         setPreview({
           url: reader.result,
-          image: image
+          image
         })
       }
       reader.readAsDataURL(image)

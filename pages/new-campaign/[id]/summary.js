@@ -5,7 +5,6 @@ import Typography from 'components/typography'
 import useWompi from 'hooks/useWompi'
 import { useNotification } from 'providers/notificationProvider'
 
-import { useSession } from 'providers/sessionProvider'
 import { useState } from 'react'
 import { getCampaignById } from 'services/campaignServices'
 import useSWR from 'swr'
@@ -18,7 +17,7 @@ const BASE = 0.15
 
 const getComision = (price) => BASE * price || 0
 
-const getAmount = (price) => (price - BASE * price || 0)
+// const getAmount = (price) => (price - BASE * price || 0)
 
 const getIva = (price) => price * 0.19
 

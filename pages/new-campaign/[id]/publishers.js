@@ -42,7 +42,7 @@ const getIva = (price) => price * 0.19
 
 const Publishers = ({ campaign }) => {
   const [showSummary, setShowSummary] = useState(false)
-  const { control, handleSubmit, getValues, formState: { errors } } = useForm({
+  const { control, handleSubmit, getValues } = useForm({
     defaultValues,
     resolver: yupResolver(publisherSchema)
   })
@@ -69,7 +69,7 @@ const Publishers = ({ campaign }) => {
 
   const ammount = useMemo(() => getAmount(campaign?.amount), [campaign])
 
-  const category = useMemo(() => campaign?.target?.category, [])
+  // const category = useMemo(() => campaign?.target?.category, [])
 
   const onSubmit = (values) => {
     const { publishers } = getValues()
