@@ -6,7 +6,7 @@ import Typography from 'components/typography'
 import { Avatar } from '@mui/material'
 import Button from 'components/button'
 import { useState } from 'react'
-import ChangePassword from 'components/changePassword'
+import ChangePassword from 'components/changedPassword'
 import CompanyProfile from 'components/companyProfile'
 import { BASE_URL } from 'utils/config'
 
