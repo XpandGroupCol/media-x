@@ -60,7 +60,6 @@ const getUser = ({
 })
 
 const Summary = ({ campaign }) => {
-  const { session } = useSession()
   const { wompi, disabled } = useWompi()
 
   const { data = {}, error } = useSWR(`${BASE_URL}/users/profile`)
