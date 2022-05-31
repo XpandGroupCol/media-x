@@ -1,25 +1,21 @@
 import { useCallback, useState } from 'react'
-import { useNotification } from 'providers/notificationProvider'
-import { changePassword } from 'services/profileServices'
-import { useRouter } from 'next/router'
-import { authChangePassword } from 'services/authServices'
+import useNotification from 'hooks/useNotification'
+import { profileUpdatePassword } from 'services/profileServices'
 
 const useChangePassword = () => {
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
-  const { notify } = useNotification()
+  const notify = useNotification()
 
-  const updatePassword = useCallback(async (payload, isAuth = false) => {
+  const updatePassword = useCallback(async (payload) => {
     try {
       setLoading(true)
-      const fn = isAuth ? authChangePassword : changePassword
-      await fn(payload)
+      await profileUpdatePassword(payload)
       setLoading(false)
-      notify({ message: 'Su contraseña ha sido actualizada correctamente', type: 'success' })
-      isAuth && router.replace('/auth/login')
+      notify.success('Contraseña cambiada exitosamente')
+      return Promise.resolve(true)
     } catch (error) {
       setLoading(false)
-      notify({ message: 'Error mensaje', type: 'error' })
+      notify.error('Algo salio mal por favor intente nuevamente')
     }
   }, [])
 

@@ -38,7 +38,7 @@ const ForgotPassword = () => {
         <Button
           color='primary'
           type='submit'
-          loading={loading === 'credentials'}
+          loading={loading}
         >
           Recuperar contraseña
         </Button>

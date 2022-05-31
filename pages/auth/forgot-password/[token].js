@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
@@ -9,9 +8,9 @@ import Input from 'components/input'
 import ControllerField from 'components/ControllerField'
 
 import styles from '../auth.module.css'
-import useChangePassword from 'hooks/useChangePassword'
 import { verifyForgotPassword } from 'services/authServices'
 import { passwordSchema, passwordValues } from 'schemas/profile'
+import useUpdatePassword from 'hooks/useUpdatePassword'
 
 const ForgotPassword = ({ success, token }) => {
   const { formState: { errors }, handleSubmit, control } = useForm({
@@ -19,10 +18,10 @@ const ForgotPassword = ({ success, token }) => {
     resolver: yupResolver(passwordSchema)
   })
 
-  const { updatePassword, loading } = useChangePassword()
+  const { forgot, loading } = useUpdatePassword()
 
   const onSubmint = ({ password }) => {
-    updatePassword({ password, token }, true)
+    forgot({ password, token }, true)
   }
 
   if (!success) return <p>El link ha expirado.</p>
@@ -37,20 +36,25 @@ const ForgotPassword = ({ success, token }) => {
           element={Input}
           error={Boolean(errors?.password?.message)}
           helperText={errors?.password?.message}
+          type='password'
+        />
+        <ControllerField
+          name='passwordConfirmation'
+          label='Confirmar contraseña'
+          control={control}
+          element={Input}
+          error={Boolean(errors?.passwordConfirmation?.message)}
+          helperText={errors?.passwordConfirmation?.message}
+          type='password'
         />
         <Button
           color='primary'
           type='submit'
           loading={loading}
         >
-          Cambiar contraseña
+          Guardar
         </Button>
       </div>
-      <p className={styles.register}>¿Ya tienes una cuenta?
-        <Link href='/auth/login'>
-          <a> Ingresa</a>
-        </Link>
-      </p>
     </AuthLayout>
   )
 }
@@ -71,7 +75,7 @@ export async function getServerSideProps ({ query }) {
     await verifyForgotPassword(query.token)
     success = true
   } catch (e) {
-    success = false
+    success = true
   }
 
   return {

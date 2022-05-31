@@ -10,7 +10,8 @@ export const defaultValues = {
   sector: null,
   ages: [],
   sex: null,
-  currency: null
+  amount: null,
+  url: ''
 }
 
 export const schema = yup.object({
@@ -23,5 +24,6 @@ export const schema = yup.object({
   sector: yup.object().required('Obejtivo es requerido').nullable(),
   ages: yup.array().min(1, 'Rango de edades es requerido').required('Rango de edades es requerido'),
   sex: yup.object().required('Sexo es requerido').nullable(),
-  currency: yup.number().required('Presupuesto es requerido').nullable()
+  amount: yup.number().required('Presupuesto es requerido').nullable(),
+  url: yup.string().url('La url debe empezar con http:// o https://').required('La url es requerida')
 }).required()

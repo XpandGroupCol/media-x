@@ -1,27 +1,47 @@
 import * as yup from 'yup'
 
 export const passwordValues = {
-  password: ''
+  password: '',
+  passwordConfirmation: ''
 }
 
 export const passwordSchema = yup.object({
-  password: yup.string().required('Contraseña es requerido').min(8, 'Contraseña debe tener minimo 8 caracteres').max(15, 'Contraseña debe tener maximo 15 caracteres')
+  password: yup.string()
+    .required('La contraseña es requerida')
+    .min(8, 'La contraseña debe tener minimo 8 caracteres')
+    .max(15, 'La contraseña debe tener minimo 8 caracteres'),
+  passwordConfirmation: yup.string()
+    .required('La contraseña es requerida')
+    .min(8, 'La contraseña debe tener minimo 8 caracteres')
+    .max(15, 'La contraseña debe tener minimo 8 caracteres')
+
+    .oneOf([yup.ref('password'), null], 'Las contraseñas no coinciden')
 }).required()
 
-export const companyValues = {
+export const profileValues = {
+  email: '',
+  name: '',
+  lastName: '',
   company: '',
   nit: '',
   phone: '',
   address: '',
   companyEmail: '',
-  phonePrefixed: ''
+  rut: null
 }
 
-export const companydSchema = yup.object({
-  company: yup.string().required('Empresa es requerido'),
-  nit: yup.string().required('Nit es requerido'),
-  phone: yup.string().required('Telefono es requerido'),
-  address: yup.string().required('Direccion es requerido'),
-  companyEmail: yup.string().required('correo electronico es requerido'),
-  phonePrefixed: yup.string()
+export const profileSchema = yup.object().shape({
+  name: yup.string().required(),
+  company: yup.string(),
+  lastName: yup.string().required(),
+  nit: yup.string().when({
+    is: value => value.length > 0,
+    then: yup.string().min(10, 'El Nit debe tener 10 digitos').max(10, 'El Nit debe tener 10 digitos')
+  }),
+  phone: yup.string().when({
+    is: value => value.length > 0,
+    then: yup.string().min(10, 'El telefono debe tener 10 digitos').max(10, 'El telefono debe tener 10 digitos')
+  }),
+  address: yup.string(),
+  companyEmail: yup.string()
 }).required()

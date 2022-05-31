@@ -1,4 +1,4 @@
-.form {
+.newCampaignForm {
     background: white;
     padding: 0 30px;
     max-width: 700px;
@@ -10,11 +10,15 @@
     justify-content: center;
     border-radius: 10px;
     box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+    width: 100%;
 }
 
-.header{
-    background: red;
+.newCampaignHeader{
     width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0 0;
 }
 
 .picture{

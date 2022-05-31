@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
-import { useNotification } from 'providers/notificationProvider'
+import useNotification from 'hooks/useNotification'
 import { useSession } from 'providers/sessionProvider'
 import { useCallback, useState } from 'react'
 import { signIn, signInSocial } from 'services/authServices'
 
 const useSignIn = () => {
-  const { notify } = useNotification()
+  const notify = useNotification()
   const { setSession } = useSession()
 
   const [loading, setLoading] = useState(null)
@@ -19,7 +19,7 @@ const useSignIn = () => {
       setSession(data)
       router.push('/campaigns')
     } catch (error) {
-      notify({ message: error?.response?.data?.message || 'test', type: 'error' })
+      notify.error(error?.response?.data?.message || 'Algo salio mal por favor intente nuevamente')
       setLoading(null)
     }
   }, [])
@@ -31,7 +31,7 @@ const useSignIn = () => {
       setSession(data)
       router.push('/campaigns')
     } catch (error) {
-      notify({ message: error?.response?.data?.message || 'test', type: 'error' })
+      notify.error(error?.response?.data?.message || 'Algo salio mal por favor intente nuevamente')
       setLoading(null)
     }
   }, [])

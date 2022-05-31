@@ -1,33 +1,60 @@
-import axios from 'axios'
-import { BASE_URL } from 'utils/config'
-import { getAuth } from 'utils/cookie'
+import { axiosFetcher } from './axiosFetcher'
 
-export const changePassword = async (payload) => {
+export const profileGetMe = async (data) => {
   try {
-    const { data } = await axios(`${BASE_URL}/users/change-password`, {
-      method: 'PUT',
-      data: payload,
-      headers: {
-        Authorization: `Bearer ${getAuth()}`
-      }
+    const response = await axiosFetcher('/users/site/me', {
+      data,
+      method: 'GET'
     })
-    return data
+    return response
   } catch (e) {
-    console.log(e.response)
     return Promise.reject(e)
   }
 }
 
-export const companyProfile = async (payload) => {
+export const profileUpdatePassword = async (data) => {
   try {
-    const { data } = await axios(`${BASE_URL}/users/company-profile`, {
-      method: 'PUT',
-      data: payload,
-      headers: {
-        Authorization: `Bearer ${getAuth()}`
-      }
+    const response = await axiosFetcher('/users/site/update-password', {
+      data,
+      method: 'PUT'
     })
-    return data
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
+export const profileUpdateAvater = async (data) => {
+  try {
+    const response = await axiosFetcher.put('/users/site/update-avatar', {
+      data,
+      method: 'PUT'
+    })
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
+export const profileUpdateCompany = async (data) => {
+  try {
+    const response = await axiosFetcher('/users/site/update-company', {
+      data,
+      method: 'PUT'
+    })
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
+export const profileUpdateMe = async (data) => {
+  try {
+    const response = await axiosFetcher('/users/site/update-profile', {
+      data,
+      method: 'PUT'
+    })
+    return response
   } catch (e) {
     return Promise.reject(e)
   }

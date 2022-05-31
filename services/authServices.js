@@ -1,18 +1,9 @@
-import axios from 'axios'
-import { BASE_URL } from 'utils/config'
-
-const OPTIONS = {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json'
-  }
-}
+import { axiosFetcher } from './axiosFetcher'
 
 export const signUp = async (user) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/signup`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/signup', {
+      method: 'POST',
       data: user
     })
     return data
@@ -23,8 +14,8 @@ export const signUp = async (user) => {
 
 export const signIn = async (credentials) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/login`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/login', {
+      method: 'POST',
       data: credentials
     })
     return data
@@ -35,8 +26,8 @@ export const signIn = async (credentials) => {
 
 export const signInSocial = async (provider) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/social-login`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/social-login', {
+      method: 'POST',
       data: provider
     })
     return data
@@ -47,8 +38,8 @@ export const signInSocial = async (provider) => {
 
 export const verifyEmail = async (token) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/verify-email`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/verify-email', {
+      method: 'POST',
       data: { token }
     })
     return data
@@ -59,8 +50,8 @@ export const verifyEmail = async (token) => {
 
 export const forgotPassword = async (email) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/forgot-password`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/forgot-password', {
+      method: 'POST',
       data: email
     })
     return data
@@ -71,8 +62,8 @@ export const forgotPassword = async (email) => {
 
 export const verifyForgotPassword = async (token) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/verify-forgot-password`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/verify-forgot-password', {
+      method: 'POST',
       data: { token }
     })
     return data
@@ -83,8 +74,8 @@ export const verifyForgotPassword = async (token) => {
 
 export const authChangePassword = async (password) => {
   try {
-    const { data } = await axios(`${BASE_URL}/auth/change-password`, {
-      ...OPTIONS,
+    const { data } = await axiosFetcher('/auth/change-password', {
+      method: 'POST',
       data: password
     })
     return data

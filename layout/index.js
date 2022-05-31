@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 import { Avatar, Divider, IconButton, Menu, MenuItem } from '@mui/material'
@@ -6,7 +6,8 @@ import MenuIcon from '@mui/icons-material/Menu'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-
+import { useAtom } from 'jotai'
+import { campaignAtom } from 'globalState/campaignAtom'
 import Typography from 'components/typography'
 import ActiveLink from 'components/activeLink'
 import { useSession } from 'providers/sessionProvider'
@@ -19,6 +20,11 @@ import Link from 'next/link'
 const Layout = ({ children }) => {
   const [showMenu, setShowMenu] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
+  const [campaign, updateCampaign] = useAtom(campaignAtom)
+  const { replace, pathname } = useRouter()
+  const redirectTo = useMemo(() => (pathname.includes('/publishers') || pathname.includes('/media')) &&
+  !Object.keys(campaign).length, [pathname])
+
   const open = Boolean(anchorEl)
   const handleClick = (event) =>
     setAnchorEl(event.currentTarget)
@@ -31,13 +37,21 @@ const Layout = ({ children }) => {
 
   const { session, logout } = useSession()
 
-  const { replace } = useRouter()
-
   useEffect(() => {
     if (session === null) replace('/auth/login')
   }, [session, replace])
 
-  if (!session) return <LoadingPage />
+  useEffect(() => {
+    if (!pathname.includes('/new-campaign')) {
+      updateCampaign({})
+    }
+
+    if (redirectTo) {
+      replace('/new-campaign')
+    }
+  }, [pathname, redirectTo, replace])
+
+  if (!session || redirectTo) return <LoadingPage />
 
   return (
     <div className={styles.page}>
@@ -89,12 +103,10 @@ const Layout = ({ children }) => {
           >
 
             <Link href='/profile'>
-              <a>
-                <MenuItem>
-                  <PersonIcon fontSize='small' sx={{ marginRight: '10px' }} />
-                  Perfil
-                </MenuItem>
-              </a>
+              <MenuItem component='a' onClick={handleClose}>
+                <PersonIcon fontSize='small' sx={{ marginRight: '10px' }} />
+                Perfil
+              </MenuItem>
             </Link>
             <Divider />
             <MenuItem onClick={logout}>

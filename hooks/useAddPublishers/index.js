@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react'
-import { useNotification } from 'providers/notificationProvider'
+import useNotification from 'hooks/useNotification'
 import { addPublishers } from 'services/campaignServices'
 import { useRouter } from 'next/router'
 const useAddPublishers = () => {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const { notify } = useNotification()
+  const notify = useNotification()
 
   const savePublishers = useCallback(async (id, publishers) => {
     try {

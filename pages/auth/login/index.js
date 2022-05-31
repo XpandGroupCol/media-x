@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { GoogleLogin } from 'react-google-login'
-
+import GoogleIcon from '@mui/icons-material/Google'
 import AuthLayout from 'layout/authLayout'
 
 import Button from 'components/button'
@@ -36,8 +36,9 @@ export default function SignIn () {
             variant='outlined' color='primary'
             onClick={onClick}
             loading={disabled}
+            color='secondary'
           >
-            Iniciar sesión con Google
+            <GoogleIcon sx={{ marginRight: '10px' }} /> Iniciar sesión con Google
           </Button>
 
         )}

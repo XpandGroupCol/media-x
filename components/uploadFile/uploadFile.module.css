@@ -1,49 +1,35 @@
-.picture{
+.uploadContainer{
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.upload{
+    background-color: #f2f5f9;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+     align-items: center;
+     cursor: pointer;
+     border-radius: 100%;
 }
 
 .inputFile{
     display: none;
 }
-
-.uploadFile{
-    width: 80px;
-    height: 80px;
+.uploadFilePicture{
+    width: 100px;
+    height: 100px;
     border: 2px dotted #5b27ed;
+    border-radius: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.previewImage{
     border-radius: 100%;
-}
-
-
-.previewImage {
-    width: 80px;
-    height: 80px;
-    border: 2px dotted #5b27ed;
-    border-radius: 100%;
-}
-
-.imagenContainer{
-    position: relative;
-}
-
-.clearButton{
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    background-color: #f44336;
-    padding: 2px;
-    color: white;
-}
-
-.clearButton:hover{
-    background-color: #f44336;
 }

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import isBefore from 'date-fns/isBefore'
@@ -13,44 +12,57 @@ import Button from 'components/button'
 import Typography from 'components/typography'
 import ControllerField from 'components/ControllerField'
 
-import useNewCamapaign from 'hooks/useNewCamapaign'
 import useLists from 'hooks/useLists'
 import { defaultValues, schema } from 'schemas/campaign'
 import styles from './newCampaign.module.css'
+import BackButton from 'components/backButton'
+import { Divider } from '@mui/material'
+import { campaignAtom } from 'globalState/campaignAtom'
+import { useRouter } from 'next/router'
+import { useAtom } from 'jotai'
+import useGetPublishersByTarget from 'hooks/useGetPublishersByTarget'
+import useNotification from 'hooks/useNotification'
 
 const NewCampaign = () => {
   const { targets = [], sectors = [], locations = [], sex = [], ages = [] } = useLists()
+  const { push } = useRouter()
+
+  const { loading, getPublushers } = useGetPublishersByTarget()
 
   const [preview, setPreview] = useState(null)
+  const [campaignState, updateCampaign] = useAtom(campaignAtom)
 
   const { formState: { errors }, handleSubmit, control, getValues, setValue } = useForm({
-    defaultValues: { ...defaultValues },
+    defaultValues: campaignState.name ? { ...campaignState } : { ...defaultValues },
     resolver: yupResolver(schema)
   })
 
-  const { createCampaign, loading } = useNewCamapaign()
+  const notify = useNotification()
 
   const values = getValues()
 
-  const onSubmit = ({ locations, ages, sector, target, sex, currency, ...restOfValues }) => {
-    const payload = {
-      ...restOfValues,
-      locations: locations.map(({ id }) => id),
-      ages: ages.map(({ id }) => id),
-      sector: sector?.id,
-      target: target?.id,
-      sex: sex?.id,
-      amount: currency
+  const onSubmit = (values) => {
+    const { amount, target } = campaignState
+
+    if (amount === values.amount && target?.id === values.target?.id) {
+      return push('/new-campaign/publishers')
     }
 
-    const data = new window.FormData()
-    data.append('campaign', JSON.stringify(payload))
+    getPublushers(values.target?.id, values.amount).then(({ publishers, percentage }) => {
+      if (publishers?.length) {
+        updateCampaign(prevValue => ({
+          ...prevValue,
+          ...values,
+          listOffPublishers: publishers,
+          rows: [],
+          selectedPublishers: [],
+          percentage
+        }))
+        return push('/new-campaign/publishers')
+      }
 
-    if (preview?.image) {
-      data.append('image', preview.image)
-    }
-
-    createCampaign(data)
+      notify.info('No se encontraron medios para con el objetivo y el valor ingresa, por favor prueba modificaion estos campos.')
+    })
   }
 
   const handleChangeStartDate = (date) => {
@@ -60,9 +72,17 @@ const NewCampaign = () => {
     setValue('startDate', date)
   }
 
+  const onBack = () => {
+    updateCampaign({})
+  }
+
   return (
-    <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-      <Typography className={styles.title} align='center'>Objetivo y Presupuesto</Typography>
+    <form className={styles.newCampaignForm} onSubmit={handleSubmit(onSubmit)}>
+      <section className={styles.newCampaignHeader}>
+        <BackButton href='/campaigns' onBack={onBack} />
+        <Typography fontSize='20px' fontWeight='bold'>Objetivo y Presupuesto</Typography>
+      </section>
+
       <UploadFile preview={preview?.url} setPreview={setPreview} />
       <ControllerField
         name='brand'
@@ -159,29 +179,32 @@ const NewCampaign = () => {
         />
       </div>
 
-      <span className={styles.divider} />
-      <Typography className={styles.amountTitle} align='left'>Presupuesto Publicitario</Typography>
       <ControllerField
-        name='currency'
+        name='url'
+        label='Url'
+        placeholder='Ingrese la url ejemplo: hhtps://www...'
+        control={control}
+        element={Input}
+        error={Boolean(errors?.url?.message)}
+        helperText={errors?.url?.message}
+      />
+
+      <Divider sx={{ width: '100%' }} />
+      <Typography sx={{ width: '100%' }} fontSize='20px' fontWeight='bold' align='left'>Presupuesto Publicitario</Typography>
+      <ControllerField
+        name='amount'
         label='Presupuesto'
         control={control}
         element={CurrencyInput}
-        error={Boolean(errors?.currency?.message)}
-        helperText={errors?.currency?.message || 'Ingresa el presupuesto que esperas invertir en esta campaña'}
+        error={Boolean(errors?.amount?.message)}
+        helperText={errors?.amount?.message || 'Ingresa el presupuesto que esperas invertir en esta campaña'}
       />
       <div className={styles.buttons}>
-        <Link href='/campaigns'>
-          <a>
-            <Button variant='outlined' color='secondary' size='large' className={styles.button}>
-              Cancelar
-            </Button>
-          </a>
-        </Link>
-
         <Button loading={loading} type='submit' variant='contained' color='primary' size='large' className={styles.button}>
           Continuar
         </Button>
       </div>
+
     </form>
   )
 }

@@ -1,20 +1,20 @@
-import { useNotification } from 'providers/notificationProvider'
+import useNotification from 'hooks/useNotification'
 import { useCallback, useState } from 'react'
 import { signUp } from 'services/authServices'
 
 const useSignUp = () => {
   const [loading, setLoading] = useState()
-  const { notify } = useNotification()
+  const notify = useNotification()
 
   const register = useCallback(async (payload) => {
     try {
       setLoading(true)
       await signUp(payload)
       setLoading(false)
-      notify({ message: 'Verifique el correo electronico', type: 'success' })
+      notify.success('Verifique el correo electronico')
     } catch (error) {
       setLoading(false)
-      notify({ message: 'Error mensaje', type: 'error' })
+      notify.error(error?.response?.data?.message || 'Algo salio mal por favor intente nuevamente')
     }
   }, [])
 

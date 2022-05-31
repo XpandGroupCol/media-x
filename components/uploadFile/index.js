@@ -2,12 +2,11 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import Button from 'components/button'
 import styles from './uploadFile.module.css'
-import { IconButton } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { Button } from '@mui/material'
+import Typography from 'components/typography'
 
-const UploadFile = ({ setPreview, preview }) => {
+const UploadFile = ({ setPreview, preview, id = 'upload-file', label = 'Subir logo' }) => {
   const [image, setImage] = useState(null)
   useEffect(() => {
     if (image) {
@@ -35,31 +34,23 @@ const UploadFile = ({ setPreview, preview }) => {
   }
 
   return (
-    <div className={styles.picture}>
-      {
+    <div className={styles.uploadContainer}>
+      <div className={styles.uploadFilePicture}>
+        {
             preview
               ? (
-                <div className={styles.imagenContainer}>
-                  <Image src={preview} width={80} height={80} className={styles.previewImage} />
-                  <IconButton className={styles.clearButton} onClick={clearImage}>
-                    <CloseIcon fontSize='small' />
-                  </IconButton>
-                </div>
+                <Image src={preview} width={80} height={80} className={styles.previewImage} />
                 )
               : (
-                <>
-                  <div className={styles.uploadFile}>
-                    <CloudUploadIcon color='primary' />
-                  </div>
-                  <Button size='small' color='primary'>
-                    <label htmlFor='contained-button-file'>
-                      <input className={styles.inputFile} type='file' accept='image/*' id='contained-button-file' onChange={handleSetImage} />
-                      Subir logo
-                    </label>
-                  </Button>
-                </>)
+                <label htmlFor={id} className={styles.upload}>
+                  <input className={styles.inputFile} type='file' accept='image/*' id={id} onChange={handleSetImage} />
+                  <CloudUploadIcon color='primary' />
+                </label>
+                )
           }
 
+      </div>
+      {preview ? <Button size='small' onClick={clearImage}>Eliminar</Button> : <Typography>{label}</Typography>}
     </div>
   )
 }

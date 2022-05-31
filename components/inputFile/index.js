@@ -4,6 +4,7 @@ import Input from 'components/input'
 import styles from './inputFile.module.css'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { forwardRef } from 'react'
+import Button from 'components/button'
 
 const InputFile = forwardRef(({ label, id, onChange, accept = 'application/pdf', value, ...props }, ref) => {
   const hanldeOnChange = ({ target }) => {
@@ -12,6 +13,17 @@ const InputFile = forwardRef(({ label, id, onChange, accept = 'application/pdf',
   }
 
   const fileName = value?.name || ''
+
+  if (value?.url) {
+    return (
+      <div>
+        <a href={value?.url} target='blank'>Ver documento</a>
+        <Button onClick={() => onChange(null)}>
+          Eliminar
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <label htmlFor={id} className={styles.label}>

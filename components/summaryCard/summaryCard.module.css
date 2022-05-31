@@ -1,0 +1,45 @@
+
+.summary {
+    background: rgb(255, 255, 255);
+    padding: 50px 30px;
+    width: 320px;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+}
+
+.summaryHeader{
+    margin-bottom: 24px;
+}
+
+div.mb20 {
+    margin-bottom: 24px;
+}
+
+.summaryRow{
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.summaryRow p, 
+.summaryRow strong {
+    font-size: 13px;
+}
+
+.summaryRow strong {
+    font-weight: bold;
+}
+
+.total {
+    border-top: 1px solid rgb(240, 242, 245);
+}
+
+.total p{
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 20px;
+}
