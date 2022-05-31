@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close'
 const Publishers = () => {
   const [campaignState, updateCampaign] = useAtom(campaignAtom)
 
-  const [files, setFiles] = useState(campaignState?.selectedPublishers || [])
+  const [files] = useState(campaignState?.selectedPublishers || [])
 
   const { loading, createCampaign } = useCreateCampaign()
 

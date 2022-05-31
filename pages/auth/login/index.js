@@ -36,7 +36,6 @@ export default function SignIn () {
             variant='outlined' color='primary'
             onClick={onClick}
             loading={disabled}
-            color='secondary'
           >
             <GoogleIcon sx={{ marginRight: '10px' }} /> Iniciar sesión con Google
           </Button>
