@@ -21,7 +21,7 @@ const Publishers = () => {
   const { replace } = useRouter()
 
   useEffect(() => {
-    if (!campaignState?.listOffPublishers.length) replace('/new-campaign')
+    if (!campaignState?.listOffPublishers?.length) replace('/new-campaign')
   }, [campaignState?.listOffPublishers])
 
   const onSubmit = (values) => {
@@ -83,14 +83,12 @@ const Publishers = () => {
     updateCampaign(prev => ({ ...prev, rows, publishers }))
   }
 
-  if (campaignState?.listOffPublishers.length <= 0) {
+  if (!campaignState?.listOffPublishers?.length) {
     return <LoadingPage text='Cargando publishers . . .' />
   }
 
-  const href = '/new-campaign'
-
   return (
-    <PublisherForm initValues={campaignState} onBack={onBack} onSubmit={onSubmit} href={href} loading={loading} />
+    <PublisherForm initValues={campaignState} onBack={onBack} onSubmit={onSubmit} href='/new-campaign' loading={loading} />
   )
 }
 

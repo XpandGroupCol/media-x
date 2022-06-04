@@ -88,6 +88,11 @@ const Layout = ({ children }) => {
             }}
             anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
             className={styles.menu}
+            sx={{
+              '& .MuiPaper-root': {
+                boxShadow: 'rgb(0 0 0 / 10%) 0px 4px 12px'
+              }
+            }}
           >
 
             <Link href='/profile'>

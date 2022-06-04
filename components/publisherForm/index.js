@@ -61,7 +61,7 @@ const PublisherForm = ({ initValues, onBack, onSubmit, href, loading }) => {
   }
 
   const handleSetShare = (index) => ({ target }) => {
-    const { publishers } = formState
+    const { publishers } = getValues()
 
     const currentRow = copyValues(publishers[index])
     const { biddingModel, pricePerUnit } = currentRow
@@ -149,6 +149,7 @@ const PublisherForm = ({ initValues, onBack, onSubmit, href, loading }) => {
         <form className={styles.form}>
           {
         fields.map((publisher, index) => {
+          console.log({ publisher })
           return (
             <PublisherCard
               key={publisher.id}

@@ -20,12 +20,10 @@ export const getPublisherRow = ({ id, publisherId, label, device, formats, targe
   rowId: id,
   label,
   device,
-  format: [],
   share: '',
   value: '',
   objectiveGoal: '',
   formats,
-  category: target?.category || [],
   ...restOfdata
 })
 
@@ -168,4 +166,11 @@ export const clearCampaign = ({
   amount,
   url,
   percentage
+})
+
+export const setCamapign = ({ startDate, endDate, publishers, ...rest }) => ({
+  ...rest,
+  endDate: new Date(endDate),
+  startDate: new Date(startDate),
+  publishers: publishers?.map(({ publisherId, formatId, ...rest }) => ({ rowId: `${publisherId}-${formatId}`, publisherId, formatId, ...rest }))
 })

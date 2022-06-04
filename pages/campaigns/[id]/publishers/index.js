@@ -17,8 +17,6 @@ const Publishers = () => {
 
   const { replace } = useRouter()
 
-  console.log({ campaignState })
-
   useEffect(() => {
     if (!isLoading && !campaignState?.listOffPublishers?.length) replace(`/campaigns/${campaignState?.id}/edit`)
   }, [campaignState?.listOffPublishers, campaignState?.id, isLoading])
