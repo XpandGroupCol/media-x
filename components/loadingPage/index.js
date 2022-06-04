@@ -1,9 +1,9 @@
 import { LinearProgress, Typography } from '@mui/material'
 import styles from './loading.module.css'
-const LoadingPage = () => {
+const LoadingPage = ({ text = 'Sincronizando los datos . . .' }) => {
   return (
     <div className={styles.loading}>
-      <Typography>Cargando...</Typography>
+      <Typography>{text}</Typography>
       <LinearProgress sx={{ width: 200 }} />
     </div>
   )

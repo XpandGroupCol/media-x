@@ -6,7 +6,7 @@ import useNotification from 'hooks/useNotification'
 
 import { useState } from 'react'
 
-import styles from './summary.module.css'
+import styles from './order.module.css'
 import useUpdateCampaignStatus from 'hooks/useUpdateCampaignStatus'
 import OrderTable from 'components/OrderTable'
 import OrderDraftButtons from 'components/orderDraftButtons'
@@ -77,7 +77,8 @@ const Order = ({ campaign, user }) => {
       fullName: `${user?.name} ${user?.lastName}`,
       phoneNumber: phone,
       legalId: nit,
-      phoneNumberPrefix: '+57'
+      phoneNumberPrefix: '+57',
+      redirectUrl: 'http://localhost:3000/campaigns'
     })
 
     checkout.open(async function ({ transaction }) {
@@ -179,8 +180,6 @@ export async function getServerSideProps ({ req, query }) {
   const user = req.cookies?.user || null
   const token = user ? JSON.parse(user)?.accessToken : null
 
-  console.log(query.id, token)
-
   if (!query.id || !token) {
     return {
       redirect: {
@@ -192,7 +191,6 @@ export async function getServerSideProps ({ req, query }) {
 
   try {
     const { data: campaign } = await getCampaignById(query.id, token)
-    console.log('llego aqui')
     const { user, ...restOfCampaign } = campaign
     return {
       props: {
@@ -201,7 +199,6 @@ export async function getServerSideProps ({ req, query }) {
       }
     }
   } catch (e) {
-    console.log({ e })
     return {
       redirect: {
         destination: '/campaigns',

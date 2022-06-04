@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 
 export const percentageOptions = {
-  style: 'percent',
+  style: 'currency',
   minimumFractionDigits: 0,
   maximumFractionDigits: 0
 }
@@ -29,40 +29,49 @@ export const getPublisherRow = ({ id, publisherId, label, device, formats, targe
   ...restOfdata
 })
 
-export const getSummaryInformation = ({ publishers }) => {
-  let medio = 0
-  let plataforma = 0
-  let impresiones = 0
-  let reproducciones = 0
+export const getSummaryInformation = ({ publishers, amount, percentage }) => {
+  const _percentage = percentage ? parseFloat(percentage / 100) : 0
+  const value = amount ? parseFloat(amount) : 0
+  const serviceFee = value && _percentage ? value * _percentage : value
+  const grossValue = value - serviceFee
+
+  let medium = 0
+  let platform = 0
+  let prints = 0
+  let reproductions = 0
   let clicks = 0
 
-  publishers.forEach(({ category, publisherCategory, value, objectiveGoal }) => {
+  publishers.forEach(({ biddingModel, publisherCategory, value, objectiveGoal }) => {
     const _value = parseFloat(value || 0)
     const _objetive = parseFloat(objectiveGoal || 0)
 
     if (publisherCategory === 'platform') {
-      plataforma += _value
+      platform += _value
     } else {
-      medio += _value
+      medium += _value
     }
 
-    if (category.includes('reproductions')) {
-      reproducciones += _objetive
+    if (biddingModel === 'CPV') {
+      reproductions += _objetive
     }
 
-    if (category.includes('prints')) {
-      impresiones += _objetive
+    if (biddingModel === 'CPM') {
+      prints += _objetive
     }
 
-    if (category.includes('clicks')) { clicks += _objetive }
+    if (biddingModel === 'CPC' || biddingModel === 'CPA') { clicks += _objetive }
   })
 
   return {
-    medio,
-    plataforma,
-    impresiones,
-    reproducciones,
-    clicks
+    medium,
+    platform,
+    prints,
+    reproductions,
+    clicks,
+    serviceFee,
+    grossValue,
+    currency: 'COP',
+    discount: 0
   }
 }
 
@@ -103,4 +112,60 @@ export const getUserInformation = ({
   companyEmail,
   rut: rut ? { url: rut } : rut,
   avatar
+})
+
+export const clearPublishers = ({
+  formatId,
+  publisherId,
+  objectiveGoal,
+  pricePerUnit,
+  biddingModel,
+  device,
+  label,
+  publisherCategory,
+  share,
+  media,
+  value
+}) => ({
+  formatId,
+  publisherId,
+  objectiveGoal,
+  pricePerUnit,
+  biddingModel,
+  device,
+  label,
+  publisherCategory,
+  share,
+  media,
+  value
+})
+
+export const clearCampaign = ({
+  ages,
+  locations,
+  sector,
+  sex,
+  target,
+  publishers,
+  brand,
+  name,
+  startDate,
+  endDate,
+  amount,
+  url,
+  percentage
+}) => ({
+  ages: ages.map(({ id }) => id),
+  locations: locations.map(({ id }) => id),
+  sector: sector?.id ?? '',
+  sex: sex?.id ?? '',
+  target: target?.id ?? '',
+  publishers: publishers.map(clearPublishers),
+  brand,
+  name,
+  startDate,
+  endDate,
+  amount,
+  url,
+  percentage
 })

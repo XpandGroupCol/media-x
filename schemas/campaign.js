@@ -1,3 +1,5 @@
+import { MIN_INVESTMENT } from 'utils/config'
+import { getFormatedNumber } from 'utils/transformData'
 import * as yup from 'yup'
 
 export const defaultValues = {
@@ -24,6 +26,6 @@ export const schema = yup.object({
   sector: yup.object().required('Obejtivo es requerido').nullable(),
   ages: yup.array().min(1, 'Rango de edades es requerido').required('Rango de edades es requerido'),
   sex: yup.object().required('Sexo es requerido').nullable(),
-  amount: yup.number().required('Presupuesto es requerido').nullable(),
+  amount: yup.number().integer().min(1000000, `La inversion minima es de ${getFormatedNumber(MIN_INVESTMENT)} COP`).required('Presupuesto es requerido').nullable(),
   url: yup.string().url('La url debe empezar con http:// o https://').required('La url es requerida')
 }).required()

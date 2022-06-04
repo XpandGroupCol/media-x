@@ -27,14 +27,11 @@ export const getCampaignById = async (id, token) => {
   }
 }
 
-export const addPublishers = async ({ id, publishers }) => {
+export const updateCampaign = async (id, payload) => {
   try {
-    const { data } = await axios(`${BASE_URL}/campaigns/${id}`, {
+    const { data } = await axiosFetcher(`${BASE_URL}/campaigns/${id}`, {
       method: 'PUT',
-      data: publishers,
-      headers: {
-        Authorization: `Bearer ${getAuth()}`
-      }
+      data: payload
     })
     return data
   } catch (e) {

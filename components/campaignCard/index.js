@@ -7,8 +7,18 @@ import { CAMPAING_STATUS } from 'utils/config'
 import { parseDate } from 'utils/transformData'
 import styles from './campaigns.module.css'
 import noImage from 'public/images/no-photo-available.png'
+import { useAtom } from 'jotai'
+import { campaignAtom } from 'globalState/campaignAtom'
 
-const CampaignCard = ({ id, logo, brand, name, status, startDate, endDate }) => {
+const CampaignCard = (campaign) => {
+  const { id, logo, brand, name, status, startDate, endDate } = campaign
+
+  const [, updateCampaign] = useAtom(campaignAtom)
+
+  const handleSetCampaign = () => {
+    updateCampaign({ ...campaign })
+  }
+
   return (
     <div className={styles.card} key={id}>
       <header className={styles.header}>
@@ -43,6 +53,12 @@ const CampaignCard = ({ id, logo, brand, name, status, startDate, endDate }) => 
         <Link href={`/campaigns/${id}/order`}>
           <Button component='a'>
             Ver order
+          </Button>
+        </Link>
+
+        <Link href={`/campaigns/${id}/edit`}>
+          <Button component='a' onClick={handleSetCampaign}>
+            Editar
           </Button>
         </Link>
       </footer>

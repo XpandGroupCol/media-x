@@ -1,6 +1,6 @@
 import { Avatar, IconButton, InputAdornment } from '@mui/material'
 import ControllerField from 'components/ControllerField'
-import input from 'components/input'
+import Input from 'components/input'
 import Typography from 'components/typography'
 import { getFormatedNumber } from 'utils/transformData'
 import styles from './publisherCard.module.css'
@@ -24,7 +24,7 @@ const PublisherCard = ({
         <CloseIcon fontSize='small' />
       </IconButton>
       <div className={styles.brand}>
-        <Avatar>{publisher.slice(0, 2)}</Avatar>
+        <Avatar>{publisher?.slice(0, 2)}</Avatar>
         <div>
           <Typography fontSize='16px' fontWeight='bold'> {publisher} </Typography>
           <Typography fontSize='14px'>{label}</Typography>
@@ -51,7 +51,7 @@ const PublisherCard = ({
         fullWidth
         size='small'
         label='Share'
-        element={input}
+        element={Input}
         type='number'
         onBlur={onBlur}
         error={error}

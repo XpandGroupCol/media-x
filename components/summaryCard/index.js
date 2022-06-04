@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import Typography from 'components/typography'
-import { getFormatedNumber } from 'utils/transformData'
+import { getFormatedNumber, parseDate } from 'utils/transformData'
 import styles from './summaryCard.module.css'
 
 const summaryCard = ({
-  campaign, medio,
-  plataforma,
-  impresiones,
-  reproducciones,
+  campaign, medium,
+  platform,
+  prints,
+  reproductions,
   clicks,
   grossValue,
   serviceFee
@@ -17,16 +17,16 @@ const summaryCard = ({
       <div className={styles.summaryHeader}>
         <Typography><strong>Marca:</strong> {campaign?.brand}</Typography>
         <Typography><strong>Campaña:</strong> {campaign?.name}</Typography>
-        <Typography><strong>Fecha:</strong> 01/01/21 a 31/03/21</Typography>
+        <Typography><strong>Fecha:</strong> {parseDate(campaign?.startDate)} - {parseDate(campaign?.endDate)}</Typography>
       </div>
       <div className={classNames(styles.content)}>
         <div className={styles.summaryRow}>
           <Typography>Inversión en plataformas</Typography>
-          <Typography component='strong'>${getFormatedNumber(plataforma)}</Typography>
+          <Typography component='strong'>${getFormatedNumber(platform)}</Typography>
         </div>
         <div className={styles.summaryRow}>
           <Typography>Inversión en medios masivos</Typography>
-          <Typography component='strong'>${getFormatedNumber(medio)}</Typography>
+          <Typography component='strong'>${getFormatedNumber(medium)}</Typography>
         </div>
         <div className={styles.summaryRow}>
           <Typography>Moneda</Typography>
@@ -46,11 +46,11 @@ const summaryCard = ({
         </div>
         <div className={styles.summaryRow}>
           <Typography color='secondary'>Impresiones</Typography>
-          <Typography color='secondary'>{getFormatedNumber(impresiones)}</Typography>
+          <Typography color='secondary'>{getFormatedNumber(prints)}</Typography>
         </div>
         <div className={styles.summaryRow}>
           <Typography color='secondary'>Reproducciones</Typography>
-          <Typography color='secondary'>{getFormatedNumber(reproducciones)}</Typography>
+          <Typography color='secondary'>{getFormatedNumber(reproductions)}</Typography>
         </div>
         <div className={classNames(styles.summaryRow, styles.mb20)}>
           <Typography color='secondary'>Clicks</Typography>

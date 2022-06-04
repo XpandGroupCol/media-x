@@ -20,10 +20,8 @@ import Link from 'next/link'
 const Layout = ({ children }) => {
   const [showMenu, setShowMenu] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
-  const [campaign, updateCampaign] = useAtom(campaignAtom)
-  const { replace, pathname } = useRouter()
-  const redirectTo = useMemo(() => (pathname.includes('/publishers') || pathname.includes('/media')) &&
-  !Object.keys(campaign).length, [pathname])
+
+  const { replace } = useRouter()
 
   const open = Boolean(anchorEl)
   const handleClick = (event) =>
@@ -41,17 +39,7 @@ const Layout = ({ children }) => {
     if (session === null) replace('/auth/login')
   }, [session, replace])
 
-  useEffect(() => {
-    if (!pathname.includes('/new-campaign')) {
-      updateCampaign({})
-    }
-
-    if (redirectTo) {
-      replace('/new-campaign')
-    }
-  }, [pathname, redirectTo, replace])
-
-  if (!session || redirectTo) return <LoadingPage />
+  if (!session) return <LoadingPage />
 
   return (
     <div className={styles.page}>
