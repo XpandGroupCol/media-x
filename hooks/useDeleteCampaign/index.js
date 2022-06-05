@@ -1,21 +1,21 @@
 import { useCallback, useState } from 'react'
 import useNotification from 'hooks/useNotification'
-import { newCampaign } from 'services/campaignServices'
+import { deleteCampign } from 'services/campaignServices'
 import { useRouter } from 'next/router'
 
-const useCreateCampaign = () => {
+const useDeleteCampaign = () => {
   const [loading, setLoading] = useState(false)
   const notify = useNotification()
   const router = useRouter()
 
-  const createCampaign = useCallback(async (payload) => {
+  const removeCampaign = useCallback(async (id) => {
     try {
       setLoading(true)
-      const { data } = await newCampaign(payload)
-      const { campaign } = data
+      const { data } = await deleteCampign(id)
+      console.log({ data })
       setLoading(false)
       notify.success('Su campaña ha sido creada correctamente')
-      // router.replace(`/campaigns/${campaign}/order`)
+      // aqui deberia mutar la data
     } catch (error) {
       setLoading(false)
       notify.error('Algo salio mal por favor intente nuevamente')
@@ -23,9 +23,9 @@ const useCreateCampaign = () => {
   }, [])
 
   return {
-    createCampaign,
+    removeCampaign,
     loading
   }
 }
 
-export default useCreateCampaign
+export default useDeleteCampaign

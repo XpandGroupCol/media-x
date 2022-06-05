@@ -12,7 +12,7 @@ import OrderTable from 'components/OrderTable'
 import OrderDraftButtons from 'components/orderDraftButtons'
 import UpdateCompanyProfileModal from 'components/updateCompanyProfileModal'
 import { addPayment, getCampaignById } from 'services/campaignServices'
-import { getInversionValues, parseDate } from 'utils/transformData'
+import { parseDate } from 'utils/transformData'
 import { Avatar } from '@mui/material'
 import { CAMPAING_STATUS } from 'utils/config'
 import BackButton from 'components/backButton'
@@ -48,9 +48,8 @@ const Order = ({ campaign, user }) => {
 
   const notify = useNotification()
 
-  const handleClose = () => {
+  const handleClose = () =>
     setShowProfileModal(false)
-  }
 
   const handlePay = () => {
     const {
@@ -104,11 +103,6 @@ const Order = ({ campaign, user }) => {
     })
   }
 
-  const {
-    grossValue,
-    serviceFee
-  } = getInversionValues(campaignState?.amount, user?.percentage)
-
   return (
     <section>
       <div className={styles.summaryCards}>
@@ -151,9 +145,7 @@ const Order = ({ campaign, user }) => {
         <OrderTable
           data={campaignState?.publishers || []}
           target={campaignState?.target?.label}
-          grossValue={grossValue}
-          serviceFee={serviceFee}
-          total={campaignState?.amount || 0}
+          summary={campaignState?.summary || {}}
         />
         <div className={styles.actions}>
           {campaignState?.status === 'draft' &&

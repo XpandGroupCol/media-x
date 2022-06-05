@@ -103,3 +103,14 @@ export const validatorFile = async (payload) => {
     return Promise.reject(e)
   }
 }
+
+export const deleteCampign = async (id) => {
+  try {
+    const { data } = await axiosFetcher(`/campaigns/${id}`, {
+      method: 'DELETE'
+    })
+    return data
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}

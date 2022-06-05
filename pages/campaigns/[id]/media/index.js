@@ -4,85 +4,57 @@ import Typography from 'components/typography'
 import styles from './publishers.module.css'
 import BackButton from 'components/backButton'
 
-import { useState } from 'react'
-import useCreateCampaign from 'hooks/useCreateCampaign'
+import { useEffect } from 'react'
 import useValidatorFile from 'hooks/useValidatorFile'
-import { IconButton } from '@mui/material'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import DoneIcon from '@mui/icons-material/Done'
-import CloseIcon from '@mui/icons-material/Close'
-import useGetCampaignByID from 'hooks/useGetCampaignByID'
 
+import useGetCampaignByID from 'hooks/useGetCampaignByID'
+import LoadingPage from 'components/loadingPage'
+import useUpdateCampaign from 'hooks/useUpdateCampaign'
+import useNotification from 'hooks/useNotification'
+import RowMedia from 'components/rowMedia'
 const Publishers = () => {
   const { isLoading, error, campaignState, updateCampaign } = useGetCampaignByID()
 
-  const [files] = useState(campaignState?.selectedPublishers || [])
+  const notify = useNotification()
 
-  const { loading, createCampaign } = useCreateCampaign()
+  const { loading, setCamapign } = useUpdateCampaign()
 
-  const { loadings, validator, removeFile } = useValidatorFile()
+  const { files, setFiles, validator, removeFile } = useValidatorFile()
+
+  useEffect(() => {
+    if (campaignState?.id) {
+      setFiles(campaignState?.publishers)
+    }
+  }, [campaignState?.id])
 
   const onSubmit = () => {
-    const { selectedPublishers, amount, ages, endDate, name, sector, locations, sex, startDate, target, url, brand } = campaignState
-
-    const payload = {
-      files: [],
-      campaign: {
-        amount,
-        ages: ages.map(({ id }) => id),
-        endDate,
-        name,
-        sector: sector?.id,
-        locations: locations.map(({ id }) => id),
-        sex: sex?.id,
-        startDate,
-        target: target?.id,
-        url,
-        brand,
-        publishers: selectedPublishers.map(({ category, format, ...restOfData }) => ({ ...restOfData }))
-      }
-    }
-
-    createCampaign(payload)
+    const publishers = files.map(({ loading, ...restOfFiles }) => ({ ...restOfFiles }))
+    setCamapign(campaignState?.id, { publishers })
   }
 
   const onBack = () => {
     updateCampaign(prev => ({ ...prev, files }))
   }
 
-  const handleValidator = (rowId) => ({ target }) => {
-    const file = new window.FormData()
-    file.append('image', target.files[0])
+  const handleValidator = (index, { height, width, mimetype, label }) => ({ target }) => {
+    const file = target.files[0]
+    const media = new window.FormData()
 
-    validator({ id: rowId, rejected: false, loading: true }, file)
+    if (!file.type.includes('image')) {
+      return notify.error(`El formato del archivo no es valido, el archivo debe ser ${mimetype}`)
+    }
+
+    media.append(label, file)
+    media.append('width', width)
+    media.append('height', height)
+    validator(index, media)
   }
 
-  const renderIcon = (rowId) => {
-    const el = loadings.find(({ id }) => id === rowId)
+  if (isLoading) return <LoadingPage text='Cargando archivos . . .' />
 
-    if (!el) {
-      return (
-        <label htmlFor={rowId}>
-          <input type='file' style={{ display: 'none' }} id={rowId} onChange={handleValidator(rowId)} />
-          <IconButton component='span'>
-            <CloudUploadIcon />
-          </IconButton>
-        </label>
-      )
-    }
-    if (el?.rejected) {
-      return (
-        <IconButton onClick={removeFile}>
-          <CloseIcon />
-        </IconButton>
-      )
-    }
-    return (
-      <IconButton component='span'>
-        <DoneIcon />
-      </IconButton>
-    )
-  }
+  const disabledButton = files.some(({ imageUrl }) => !imageUrl)
+
+  const handleRemoveFile = index => () => removeFile(index)
 
   return (
     <section className={styles.mediaPage}>
@@ -97,20 +69,27 @@ const Publishers = () => {
 
       <section className={styles.uploadMedia}>
 
-        {files.map(({ label, rowId, height, width, type }) => (
+        {files.map(({ label, rowId, height, width, mimetype, imageUrl, loading = false, error = false }, index) => (
 
           <div key={rowId} className={styles.mediaRow}>
             <div>
               <Typography fontWeight='bold'>{label}</Typography>
-              <Typography>Dimensiones: {height}x{width}.{type}</Typography>
+              <Typography>Dimensiones: {width}x{height}.{mimetype}</Typography>
             </div>
-            {renderIcon(rowId)}
+            <RowMedia
+              id={rowId}
+              isLoading={loading}
+              url={imageUrl}
+              upload={handleValidator(index, { height, width, mimetype, label })}
+              remove={handleRemoveFile(index)}
+              error={error}
+            />
           </div>
         ))}
       </section>
 
-      <Button onClick={onSubmit} loading={loading}>
-        crear campaña
+      <Button onClick={onSubmit} loading={loading} disabled={disabledButton}>
+        Agregar archivos
       </Button>
     </section>
   )

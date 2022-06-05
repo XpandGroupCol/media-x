@@ -13,15 +13,22 @@ import Menu from './menu'
 import MenuItem from '@mui/material/MenuItem'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import useDeleteCampaign from 'hooks/useDeleteCampaign'
 
 const CampaignCard = (campaign) => {
   const { id, logo, brand, name, status, startDate, endDate, summary } = campaign
 
   const [, updateCampaign] = useAtom(campaignAtom)
 
+  const { removeCampaign } = useDeleteCampaign()
+
   const handleSetCampaign = (onClose) => () => {
     updateCampaign({ ...setCamapign(campaign) })
     onClose()
+  }
+
+  const handleDeleteCampaign = () => {
+    removeCampaign(id)
   }
 
   return (
@@ -42,11 +49,7 @@ const CampaignCard = (campaign) => {
                     </MenuItem>
                   </Link>
 
-                  <MenuItem onClick={() => {
-                    console.log('eliminando ...')
-                    onClose()
-                  }}
-                  ><DeleteIcon fontSize='small' sx={{ marginRight: '10px' }} />   Eliminar
+                  <MenuItem onClick={handleDeleteCampaign}><DeleteIcon fontSize='small' sx={{ marginRight: '10px' }} />   Eliminar
                   </MenuItem>
                 </div>
               ))

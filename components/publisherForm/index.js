@@ -120,7 +120,7 @@ const PublisherForm = ({ initValues, onBack, onSubmit, href, loading }) => {
 
   const handleOnBack = () => onBack({ publishers: formState?.publishers || [], rows })
 
-  const disabledButton = !formState?.publishers.length || Object.keys(errors).length
+  const disabledButton = Boolean(!formState?.publishers.length || Object.keys(errors).length)
 
   return (
     <section className={styles.publishers}>
@@ -147,10 +147,7 @@ const PublisherForm = ({ initValues, onBack, onSubmit, href, loading }) => {
         <Typography fontSize='14px' align='center' sx={{ marginBottom: '24px' }}>Segmentación inicial para la campaña</Typography>
         {!fields.length && <Typography fontSize='12px' align='center' sx={{ color: '#5b595f', margin: '30px 0' }}>Ningun medio seleccionado</Typography>}
         <form className={styles.form}>
-          {
-        fields.map((publisher, index) => {
-          console.log({ publisher })
-          return (
+          {fields.map((publisher, index) => (
             <PublisherCard
               key={publisher.id}
               name={`publishers.${index}.share`}
@@ -161,9 +158,7 @@ const PublisherForm = ({ initValues, onBack, onSubmit, href, loading }) => {
               helperText={errors?.publishers && errors?.publishers[index]?.share?.message}
               {...publisher}
             />
-          )
-        })
-      }
+          ))}
           <Divider sx={{ width: '100%', marginBottom: '20px' }} />
           <div className={styles.buttonContainer}>
             <Button size='large' disabled={disabledButton} variant='contained' onClick={handleSubmit(onSubmit)} loading={loading}>Guardar campaña</Button>

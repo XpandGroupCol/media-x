@@ -54,7 +54,10 @@ const Publishers = () => {
           label,
           publisherCategory,
           share,
-          value
+          value,
+          width,
+          minetype,
+          height
         }, i) => {
           payload.append(`${key}[${i}][formatId]`, formatId ?? '')
           payload.append(`${key}[${i}][publisherId]`, publisherId ?? '')
@@ -66,6 +69,10 @@ const Publishers = () => {
           payload.append(`${key}[${i}][publisherCategory]`, publisherCategory ?? '')
           payload.append(`${key}[${i}][share]`, share ?? '')
           payload.append(`${key}[${i}][value]`, value ?? '')
+          payload.append(`${key}[${i}][width]`, width ?? 0)
+          payload.append(`${key}[${i}][height]`, height ?? '')
+          payload.append(`${key}[${i}][mimetype]`, minetype ?? '')
+          payload.append(`${key}[${i}][imageUrl]`, '')
         })
         return
       }

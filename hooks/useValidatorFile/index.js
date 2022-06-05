@@ -3,46 +3,71 @@ import { useCallback, useState } from 'react'
 import { validatorFile } from 'services/campaignServices'
 
 const useValidatorFile = () => {
-  const [loading, setLoading] = useState([])
+  const [files, setFiles] = useState([])
   const notify = useNotification()
 
-  const validator = useCallback(async (info, payload) => {
+  const validator = useCallback(async (index, payload) => {
     try {
-      setLoading(prev => [...prev, info])
-      await validatorFile(payload)
-      setLoading(prev => prev.map((el) => {
-        if (el.id === info.id) {
-          return {
-            ...el,
-            loading: false,
-            rejected: false
-          }
+      setFiles(prev => {
+        const files = [...prev]
+        const currentFile = files[index]
+
+        console.log({ currentFile })
+
+        if (currentFile) {
+          currentFile.loading = true
+          currentFile.imageUrl = ''
         }
-        return el
-      }))
+        return files
+      })
+      const { data } = await validatorFile(payload)
+      const [file = {}] = data
+      setFiles(prev => {
+        const files = [...prev]
+        const currentFile = files[index]
+        if (currentFile) {
+          currentFile.loading = false
+          currentFile.imageUrl = file?.url || ''
+        }
+        return files
+      })
+
       notify.success('El archivo ha sido cargado correctamente')
-    } catch (e) {
-      setLoading(prev => prev.map((el) => {
-        if (el.id === info.id) {
-          return {
-            ...el,
-            loading: false,
-            rejected: true
-          }
+    } catch ({ response }) {
+      const message = response?.data?.message
+
+      setFiles(prev => {
+        const files = [...prev]
+        const currentFile = files[index]
+        if (currentFile) {
+          currentFile.loading = false
+          currentFile.imageUrl = ''
         }
-        return el
-      }))
-      notify.error('El archivo no es un fomato valido')
+        return files
+      })
+
+      notify.error(message && message === 'The dimensions sent are not allowed'
+        ? 'Las dimensiones del archivo no son validas.'
+        : 'Verifique las dimension y formato del archivo')
     }
   }, [])
 
-  const removeFile = useCallback((fileId) => {
-    setLoading(prev => prev.filter((el) => el?.id === fileId))
+  const removeFile = useCallback((index) => {
+    setFiles(prev => {
+      const files = [...prev]
+      const currentFile = files[index]
+      if (currentFile) {
+        currentFile.loading = false
+        currentFile.imageUrl = ''
+      }
+      return files
+    })
   }, [])
 
   return {
     validator,
-    loadings: loading,
+    files,
+    setFiles,
     removeFile
   }
 }

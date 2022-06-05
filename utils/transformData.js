@@ -122,8 +122,11 @@ export const clearPublishers = ({
   label,
   publisherCategory,
   share,
-  media,
-  value
+  imageUrl,
+  value,
+  width,
+  type,
+  height
 }) => ({
   formatId,
   publisherId,
@@ -134,8 +137,11 @@ export const clearPublishers = ({
   label,
   publisherCategory,
   share,
-  media,
-  value
+  imageUrl,
+  value,
+  width,
+  minetype: type,
+  height
 })
 
 export const clearCampaign = ({

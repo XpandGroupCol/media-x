@@ -19,8 +19,6 @@ const NewCampaign = () => {
   const onSubmit = (values) => {
     const { amount, target, listOffPublishers = [] } = campaignState
 
-    console.log({ amount, target, listOffPublishers }, { values })
-
     if (amount === values.amount && target?.id === values.target?.id && listOffPublishers?.length > 0) {
       updateCampaign(prevValue => ({ ...prevValue, ...values }))
       return push(`/campaigns/${campaignState?.id}/publishers`)

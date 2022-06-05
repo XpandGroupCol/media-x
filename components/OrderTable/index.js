@@ -2,8 +2,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from
 import { getFormatedNumber } from 'utils/transformData'
 
 const OrderTable = ({
-  data = [], target, grossValue,
-  serviceFee, total
+  data = [], summary = {}, target
 }) => {
   return (
     <TableContainer>
@@ -13,43 +12,45 @@ const OrderTable = ({
             <TableCell width='20%'>Medio</TableCell>
             <TableCell width='20%'>Objetivo publicitario</TableCell>
             <TableCell width='20%'>Formato</TableCell>
-            <TableCell width='10%'>Share</TableCell>
-            <TableCell width='10%'>Costo por objetivo</TableCell>
-            <TableCell width='10%'>KPI</TableCell>
-            <TableCell width='10%'>Tipo de compra</TableCell>
+            <TableCell width='8%' align='right'>Share</TableCell>
+            <TableCell width='8%' align='right'>C/U</TableCell>
+            <TableCell width='8%' align='right'>KPI</TableCell>
+            <TableCell width='8%' align='center'>Tipo de compra</TableCell>
+            <TableCell width='8%' align='right'>Total</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(({ rowId, label, objectiveGoal, biddingModel, pricePerUnit, share, publisher }) => (
+          {data.map(({ _id, label, objectiveGoal, biddingModel, pricePerUnit, share, publisher, value, summary }) => (
             <TableRow
-              key={rowId}
+              key={_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell>{publisher}</TableCell>
-              <TableCell>{label}</TableCell>
               <TableCell>{target}</TableCell>
-              <TableCell>{share}%</TableCell>
-              <TableCell>${getFormatedNumber(pricePerUnit)}</TableCell>
-              <TableCell>{getFormatedNumber(objectiveGoal)}</TableCell>
-              <TableCell>{biddingModel}</TableCell>
+              <TableCell>{label}</TableCell>
+              <TableCell align='right'>{share}%</TableCell>
+              <TableCell align='right'>${getFormatedNumber(pricePerUnit)}</TableCell>
+              <TableCell align='right'>{getFormatedNumber(objectiveGoal)}</TableCell>
+              <TableCell align='center'>{biddingModel}</TableCell>
+              <TableCell align='right'>{getFormatedNumber(value)}</TableCell>
             </TableRow>
           ))}
 
           <TableRow>
             <TableCell colSpan={5} />
-            <TableCell>Valor bruto</TableCell>
-            <TableCell align='right'>${getFormatedNumber(grossValue)}</TableCell>
+            <TableCell colSpan={2} sx={{ fontWeight: 'bold' }}>Valor bruto:</TableCell>
+            <TableCell align='right' sx={{ fontWeight: 'bold' }}>${getFormatedNumber(summary?.grossValue)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell colSpan={5} />
-            <TableCell>Inpuesto de plataforma</TableCell>
+            <TableCell colSpan={2} sx={{ fontWeight: 'bold' }}>Inpuesto:</TableCell>
 
-            <TableCell align='right'>${getFormatedNumber(serviceFee)}</TableCell>
+            <TableCell align='right' sx={{ fontWeight: 'bold' }}>${getFormatedNumber(summary?.serviceFee)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell colSpan={5} />
-            <TableCell>Total</TableCell>
-            <TableCell align='right'>${getFormatedNumber(total)}</TableCell>
+            <TableCell colSpan={2} sx={{ fontWeight: 'bold' }}>Total:</TableCell>
+            <TableCell align='right' sx={{ fontWeight: 'bold' }}>${getFormatedNumber(summary?.grossValue + summary?.serviceFee)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
