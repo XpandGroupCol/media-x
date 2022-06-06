@@ -7,30 +7,24 @@ import { Button } from '@mui/material'
 import Typography from 'components/typography'
 
 const UploadFile = ({ setPreview, preview, id = 'upload-file', label = 'Subir logo' }) => {
-  const [image, setImage] = useState(null)
-  useEffect(() => {
-    if (image) {
+  const handleSetImage = ({ target }) => {
+    const file = target.files[0]
+    if (file && file.type.substr(0, 5) === 'image') {
       const reader = new window.FileReader()
       reader.onloadend = () => {
         setPreview({
           url: reader.result,
-          image
+          image: file
         })
       }
-      reader.readAsDataURL(image)
-    } else {
-      setPreview(null)
+      reader.readAsDataURL(file)
+      return
     }
-  }, [image, setPreview])
-
-  const handleSetImage = ({ target }) => {
-    const file = target.files[0]
-    if (file && file.type.substr(0, 5) === 'image') { return setImage(file) }
-    setImage(null)
+    setPreview(null)
   }
 
   const clearImage = () => {
-    setImage(null)
+    setPreview(null)
   }
 
   return (

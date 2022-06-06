@@ -42,6 +42,21 @@
     color: #229a16;
 }
 
+.status.cancel {
+    background-color: #ff484229;
+    color: #b72136;
+}
+
+.status.inProgress {
+    background-color: #ff484229;
+    color: #b72136;
+}
+
+.status.completed {
+    background-color: rgb(255, 244, 229);
+    color: rgb(102, 60, 0);
+}
+
 .header {
     display: flex;
     flex-direction: column;

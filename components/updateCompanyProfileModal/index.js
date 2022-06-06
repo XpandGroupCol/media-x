@@ -24,8 +24,9 @@ const UpdateCompanyProfileModal = ({ open, onClose, initValues, showButton }) =>
     if (!open) reset(initValues)
   }, [open])
 
-  const onSubmit = ({ checkRut, rut, ...restOfUser }) => {
+  const onSubmit = (values) => {
     const payload = new window.FormData()
+    const { checkRut, rut, ...restOfUser } = values
 
     if (rut?.url) {
       payload.append('rut', rut?.url)
@@ -115,8 +116,8 @@ const UpdateCompanyProfileModal = ({ open, onClose, initValues, showButton }) =>
             label='Subir rut'
             control={control}
             element={InputFile}
-            error={Boolean(errors?.address?.message)}
-            helperText={errors?.address?.message || 'El rut debe estar en un formato de PDF'}
+            error={Boolean(errors?.rut?.message)}
+            helperText={errors?.rut?.message || 'El rut debe estar en un formato de PDF'}
           />
         </div>
         <div className={styles.buttons}>

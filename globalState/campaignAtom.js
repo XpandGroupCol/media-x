@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 
-export const campaignAtom = atom({
+export const InitCampaignState = {
+  logo: null,
   brand: '',
   name: '',
   startDate: new Date(),
@@ -13,4 +14,6 @@ export const campaignAtom = atom({
   amount: null,
   url: '',
   publishers: []
-})
+}
+
+export const campaignAtom = atom({ ...InitCampaignState })

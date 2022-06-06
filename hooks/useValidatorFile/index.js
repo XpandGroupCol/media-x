@@ -2,8 +2,8 @@ import useNotification from 'hooks/useNotification'
 import { useCallback, useState } from 'react'
 import { validatorFile } from 'services/campaignServices'
 
-const useValidatorFile = () => {
-  const [files, setFiles] = useState([])
+const useValidatorFile = (initValues = []) => {
+  const [files, setFiles] = useState(initValues)
   const notify = useNotification()
 
   const validator = useCallback(async (index, payload) => {
@@ -11,8 +11,6 @@ const useValidatorFile = () => {
       setFiles(prev => {
         const files = [...prev]
         const currentFile = files[index]
-
-        console.log({ currentFile })
 
         if (currentFile) {
           currentFile.loading = true

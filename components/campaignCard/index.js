@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import useDeleteCampaign from 'hooks/useDeleteCampaign'
 
 const CampaignCard = (campaign) => {
-  const { id, logo, brand, name, status, startDate, endDate, summary } = campaign
+  const { id, logo, brand, name, status, startDate, endDate, summary, publishers } = campaign
 
   const [, updateCampaign] = useAtom(campaignAtom)
 
@@ -31,13 +31,16 @@ const CampaignCard = (campaign) => {
     removeCampaign(id)
   }
 
+  const hasAllFiles = publishers.some(({ imageUrl }) => !imageUrl)
+
   return (
     <div className={styles.card} key={id}>
       <header className={styles.header}>
         {logo ? <Avatar src={logo} sx={{ width: 80, height: 80 }} /> : <Image style={{ borderRadius: '100%' }} src={noImage} width={80} height={80} />}
-        <div className={styles.menu}>
-          <Menu>
-            {
+        {['draft', 'pending', 'cancel'].includes(status) && (
+          <div className={styles.menu}>
+            <Menu>
+              {
               (({ onClose }) => (
                 <div>
                   <Link href={`/campaigns/${id}/edit`}>
@@ -54,8 +57,8 @@ const CampaignCard = (campaign) => {
                 </div>
               ))
             }
-          </Menu>
-        </div>
+            </Menu>
+          </div>)}
         <Typography className={styles.title}>{brand}</Typography>
         <Typography className={styles.subtitle}>{name}</Typography>
         <div className={styles.date}>
@@ -83,11 +86,12 @@ const CampaignCard = (campaign) => {
 
       </div>
       <footer className={styles.footer}>
-        <Link href={`/campaigns/${id}/order`}>
-          <Button component='a'>
-            Ver order
-          </Button>
-        </Link>
+        {!hasAllFiles && ['draft', 'pending', 'cancel'].includes(status) && (
+          <Link href={`/campaigns/${id}/order`}>
+            <Button component='a'>
+              Ver order
+            </Button>
+          </Link>)}
       </footer>
     </div>
   )

@@ -4,7 +4,11 @@ import AddIcon from '@mui/icons-material/Add'
 import styles from './listOfCampaings.module.css'
 import CampaignCard from 'components/campaignCard'
 import Typography from 'components/typography'
+import { campaignAtom, InitCampaignState } from 'globalState/campaignAtom'
+import { useAtom } from 'jotai'
 const ListOfCampaings = ({ data, error }) => {
+  const [, updateCampaign] = useAtom(campaignAtom)
+
   if (error) {
     return (
       <div className={styles.empty}>
@@ -18,6 +22,7 @@ const ListOfCampaings = ({ data, error }) => {
 
       <Link href='/new-campaign'>
         <IconButton
+          onClick={() => updateCampaign({ ...InitCampaignState })}
           component='a' size='large' sx={{
             position: 'fixed',
             background: '#5b27ed',

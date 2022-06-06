@@ -4,36 +4,33 @@ import Typography from 'components/typography'
 import styles from './publishers.module.css'
 import BackButton from 'components/backButton'
 
-import { useEffect } from 'react'
 import useValidatorFile from 'hooks/useValidatorFile'
 
-import useGetCampaignByID from 'hooks/useGetCampaignByID'
-import LoadingPage from 'components/loadingPage'
 import useUpdateCampaign from 'hooks/useUpdateCampaign'
 import useNotification from 'hooks/useNotification'
 import RowMedia from 'components/rowMedia'
-const Publishers = () => {
-  const { isLoading, error, campaignState, updateCampaign } = useGetCampaignByID()
+import { useRouter } from 'next/router'
+import { getCampaignById, updateCampaign } from 'services/campaignServices'
+const Media = ({ campaign }) => {
+  const router = useRouter()
 
   const notify = useNotification()
 
   const { loading, setCamapign } = useUpdateCampaign()
 
-  const { files, setFiles, validator, removeFile } = useValidatorFile()
-
-  useEffect(() => {
-    if (campaignState?.id) {
-      setFiles(campaignState?.publishers)
-    }
-  }, [campaignState?.id])
+  const { files, validator, removeFile } = useValidatorFile(campaign?.publishers)
 
   const onSubmit = () => {
     const publishers = files.map(({ loading, ...restOfFiles }) => ({ ...restOfFiles }))
-    setCamapign(campaignState?.id, { publishers })
+    setCamapign(campaign?.id, { publishers }).then((campaign) => {
+      if (campaign) {
+        router.push(`/campaigns/${campaign?.id}/order`)
+      }
+    })
   }
 
   const onBack = () => {
-    updateCampaign(prev => ({ ...prev, files }))
+    updateCampaign({})
   }
 
   const handleValidator = (index, { height, width, mimetype, label }) => ({ target }) => {
@@ -50,8 +47,6 @@ const Publishers = () => {
     validator(index, media)
   }
 
-  if (isLoading) return <LoadingPage text='Cargando archivos . . .' />
-
   const disabledButton = files.some(({ imageUrl }) => !imageUrl)
 
   const handleRemoveFile = index => () => removeFile(index)
@@ -59,7 +54,7 @@ const Publishers = () => {
   return (
     <section className={styles.mediaPage}>
       <section className={styles.mediaPageHeader}>
-        <BackButton href='/new-campaign/publishers' onBack={onBack} />
+        <BackButton href='/campaigns' onBack={onBack} />
         <Typography fontSize='20px' fontWeight='bold'>Multimedia</Typography>
       </section>
       <Typography
@@ -95,4 +90,36 @@ const Publishers = () => {
   )
 }
 
-export default Publishers
+export async function getServerSideProps ({ req, query }) {
+  const user = req.cookies?.user || null
+  const token = user ? JSON.parse(user)?.accessToken : null
+
+  if (!query.id || !token) {
+    return {
+      redirect: {
+        destination: '/campaigns',
+        permanent: false
+      }
+    }
+  }
+
+  try {
+    const { data: campaign } = await getCampaignById(query.id, token)
+    const { user, ...restOfCampaign } = campaign
+    return {
+      props: {
+        user,
+        campaign: { ...restOfCampaign }
+      }
+    }
+  } catch (e) {
+    return {
+      redirect: {
+        destination: '/campaigns',
+        permanent: false
+      }
+    }
+  }
+}
+
+export default Media

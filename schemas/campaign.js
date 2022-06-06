@@ -3,6 +3,7 @@ import { getFormatedNumber } from 'utils/transformData'
 import * as yup from 'yup'
 
 export const defaultValues = {
+  logo: null,
   brand: '',
   name: '',
   startDate: new Date(),

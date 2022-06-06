@@ -16,7 +16,9 @@ import { parseDate } from 'utils/transformData'
 import { Avatar } from '@mui/material'
 import { CAMPAING_STATUS } from 'utils/config'
 import BackButton from 'components/backButton'
-// TODO: En cancelar orden se debe generar una modal de confirmacion
+import Link from 'next/link'
+
+import ConfirmCancelCampaign from 'components/confirmCancelCampaign'
 
 const getUserInitValues = ({
   address,
@@ -45,6 +47,11 @@ const Order = ({ campaign, user }) => {
   const { loading, setCampaignStatus } = useUpdateCampaignStatus()
 
   const [showProfileModal, setShowProfileModal] = useState(false)
+
+  const [cancelModal, setCancelModal] = useState(false)
+
+  const handleCLoseModal = () => setCancelModal(false)
+  const handleOpenModal = () => setCancelModal(true)
 
   const notify = useNotification()
 
@@ -99,6 +106,17 @@ const Order = ({ campaign, user }) => {
     setCampaignStatus(campaignState?.id, status).then((response) => {
       if (response) {
         setCampaignState(response)
+        notify.success('Su orden ha sido creada correctamente')
+      }
+    })
+  }
+
+  const handleCancelOrder = (status) => () => {
+    setCampaignStatus(campaignState?.id, status).then((response) => {
+      if (response) {
+        setCampaignState(response)
+        handleCLoseModal()
+        notify.success('Su orden ha sido cancelada correctamente')
       }
     })
   }
@@ -148,12 +166,17 @@ const Order = ({ campaign, user }) => {
           summary={campaignState?.summary || {}}
         />
         <div className={styles.actions}>
-          {campaignState?.status === 'draft' &&
-            <OrderDraftButtons loading={loading} onClick={handleUpdateStatus('pending')} />}
+          {(campaignState?.status === 'draft' || campaignState?.status === 'cancel') &&
+            <OrderDraftButtons loading={loading} onClick={handleUpdateStatus('pending')} status={campaignState?.status} />}
 
           {campaignState?.status === 'pending' && (
             <div className={styles.paymentWithWompi}>
-              <Button disabled={leavePage} onClick={handleUpdateStatus} variant='outlined' color='secondary'>
+              <Link href='/campaigns'>
+                <Button variant='outlined' color='primary'>
+                  Salir
+                </Button>
+              </Link>
+              <Button disabled={leavePage} onClick={handleOpenModal} variant='outlined' color='secondary'>
                 Cancelar orden
               </Button>
               <Button onClick={handlePay} disabled={disabled || leavePage}>
@@ -164,6 +187,7 @@ const Order = ({ campaign, user }) => {
         </div>
 
       </div>
+      <ConfirmCancelCampaign open={cancelModal} onClose={handleCLoseModal} onSubmit={handleCancelOrder('cancel')} loading={loading} />
     </section>
   )
 }

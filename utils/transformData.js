@@ -27,8 +27,8 @@ export const getPublisherRow = ({ id, publisherId, label, device, formats, targe
   ...restOfdata
 })
 
-export const getSummaryInformation = ({ publishers, amount, percentage }) => {
-  const _percentage = percentage ? parseFloat(percentage / 100) : 0
+export const getSummaryInformation = ({ publishers, amount, userPercentage }) => {
+  const _percentage = userPercentage ? parseFloat(userPercentage / 100) : 0
   const value = amount ? parseFloat(amount) : 0
   const serviceFee = value && _percentage ? value * _percentage : value
   const grossValue = value - serviceFee
@@ -77,17 +77,6 @@ export const copyValues = (values) => JSON.parse(JSON.stringify(values))
 
 export const getTotalShare = (publishers) => publishers.reduce((acc, current) => acc + parseFloat(current.share), 0)
 
-export const getInversionValues = (value, percentage) => {
-  const _percentage = percentage ? parseFloat(percentage / 100) : 0
-  const _value = value ? parseFloat(value) : 0
-  const serviceFee = value && _percentage ? value * _percentage : value
-  const grossValue = _value - serviceFee
-  return {
-    grossValue,
-    serviceFee
-  }
-}
-
 export const getUserInformation = ({
   email,
   name,
@@ -119,13 +108,14 @@ export const clearPublishers = ({
   pricePerUnit,
   biddingModel,
   device,
+  publisher,
   label,
   publisherCategory,
   share,
   imageUrl,
   value,
   width,
-  type,
+  mimetype,
   height
 }) => ({
   formatId,
@@ -140,7 +130,8 @@ export const clearPublishers = ({
   imageUrl,
   value,
   width,
-  minetype: type,
+  mimetype,
+  publisher,
   height
 })
 
@@ -157,7 +148,8 @@ export const clearCampaign = ({
   endDate,
   amount,
   url,
-  percentage
+  userPercentage,
+  logo
 }) => ({
   ages: ages.map(({ id }) => id),
   locations: locations.map(({ id }) => id),
@@ -171,7 +163,8 @@ export const clearCampaign = ({
   endDate,
   amount,
   url,
-  percentage
+  userPercentage,
+  logo
 })
 
 export const setCamapign = ({ startDate, endDate, publishers, ...rest }) => ({

@@ -39,7 +39,11 @@ const Publishers = () => {
     const summary = getSummaryInformation(values)
 
     setCamapign(id, { ...payload, summary }).then((data) => {
-      console.log({ data })
+      if (data) {
+        const hasAllFiles = data.publishers.some(({ imageUrl }) => !imageUrl)
+        const path = hasAllFiles ? `/campaigns/${campaignState?.id}/media` : `/campaigns/${campaignState?.id}/order`
+        return replace(path)
+      }
     })
   }
 

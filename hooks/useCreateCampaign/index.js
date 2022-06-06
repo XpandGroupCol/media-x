@@ -12,10 +12,9 @@ const useCreateCampaign = () => {
     try {
       setLoading(true)
       const { data } = await newCampaign(payload)
-      const { campaign } = data
-      setLoading(false)
       notify.success('Su campaña ha sido creada correctamente')
-      // router.replace(`/campaigns/${campaign}/order`)
+      router.push(`/campaigns/${data?.id}/media`)
+      setLoading(false)
     } catch (error) {
       setLoading(false)
       notify.error('Algo salio mal por favor intente nuevamente')

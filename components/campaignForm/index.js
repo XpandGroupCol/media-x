@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import isBefore from 'date-fns/isBefore'
 
-import { Divider } from '@mui/material'
+import { Avatar, Divider } from '@mui/material'
 import Input from 'components/input'
 import CurrencyInput from 'components/currencyInput'
 import UploadFile from 'components/uploadFile'
@@ -19,11 +19,14 @@ import { schema } from 'schemas/campaign'
 import { MIN_INVESTMENT } from 'utils/config'
 import styles from './campaignForm.module.css'
 import { getFormatedNumber } from 'utils/transformData'
+import Image from 'next/image'
 
 const CampaignForm = ({ onSubmit, onBack, initValues, loading }) => {
   const { targets = [], sectors = [], locations = [], sex = [], ages = [] } = useLists()
 
-  const [preview, setPreview] = useState(null)
+  console.log({ initValues })
+
+  const [preview, setPreview] = useState(initValues?.logo || null)
 
   const currencyRef = useRef(null)
 
@@ -33,6 +36,8 @@ const CampaignForm = ({ onSubmit, onBack, initValues, loading }) => {
   })
 
   const values = getValues()
+
+  console.log({ preview })
 
   const handleChangeStartDate = (date) => {
     if (values.endDate && isBefore(values.endDate, date)) {
@@ -55,14 +60,19 @@ const CampaignForm = ({ onSubmit, onBack, initValues, loading }) => {
 
   const disabledButton = Boolean(Object.keys(errors).length)
 
+  const handleOnSumbit = (values) => {
+    onSubmit({ ...values, logo: preview })
+  }
+
   return (
-    <form className={styles.newCampaignForm} onSubmit={handleSubmit(onSubmit)}>
+    <form className={styles.newCampaignForm} onSubmit={handleSubmit(handleOnSumbit)}>
       <section className={styles.newCampaignHeader}>
         <BackButton href='/campaigns' onBack={onBack} />
         <Typography fontSize='20px' fontWeight='bold'>Objetivo y Presupuesto</Typography>
       </section>
 
-      <UploadFile preview={preview?.url} setPreview={setPreview} />
+      {!initValues?.id && <UploadFile preview={preview?.url} setPreview={setPreview} />}
+      {initValues.id && initValues.logo && <Avatar src={initValues.logo} sx={{ width: 80, height: 80 }} />}
       <ControllerField
         name='brand'
         label='Marca'

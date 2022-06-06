@@ -10,7 +10,7 @@ import LoadingPage from 'components/loadingPage'
 const NewCampaign = () => {
   const { push } = useRouter()
 
-  const { isLoading, error, campaignState, updateCampaign } = useGetCampaignByID()
+  const { isLoading, campaignState, updateCampaign } = useGetCampaignByID()
 
   const { loading, getPublushers } = useGetPublishersByTarget()
 
@@ -43,7 +43,7 @@ const NewCampaign = () => {
           listOffPublishers,
           rows: clearPublishers ? [] : prevValue.row ?? rows,
           publishers: clearPublishers ? [] : prevValue.publishers ?? [],
-          percentage
+          userPercentage: percentage
         }))
         return push(`/campaigns/${campaignState?.id}/publishers`)
       }

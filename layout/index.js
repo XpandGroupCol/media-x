@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 
 import { Avatar, Divider, IconButton, Menu, MenuItem } from '@mui/material'
@@ -6,8 +6,6 @@ import MenuIcon from '@mui/icons-material/Menu'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import { useAtom } from 'jotai'
-import { campaignAtom } from 'globalState/campaignAtom'
 import Typography from 'components/typography'
 import ActiveLink from 'components/activeLink'
 import { useSession } from 'providers/sessionProvider'
@@ -88,11 +86,6 @@ const Layout = ({ children }) => {
             }}
             anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
             className={styles.menu}
-            sx={{
-              '& .MuiPaper-root': {
-                boxShadow: 'rgb(0 0 0 / 10%) 0px 4px 12px'
-              }
-            }}
           >
 
             <Link href='/profile'>
