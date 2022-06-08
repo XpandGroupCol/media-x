@@ -19,11 +19,6 @@ const NewCampaign = () => {
   const onSubmit = (values) => {
     const { amount, target } = campaignState
 
-    if (values.amount >= 10000000) {
-    // aqui debo notificar a xpand
-      return notify.info('Notamos que la inversion supera el monto permitido, uno de nuestros agentes se pongra en contacto con usted')
-    }
-
     if (amount === values.amount && target?.id === values.target?.id) {
       return push('/new-campaign/publishers')
     }
