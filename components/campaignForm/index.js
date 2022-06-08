@@ -19,12 +19,9 @@ import { schema } from 'schemas/campaign'
 import { MIN_INVESTMENT } from 'utils/config'
 import styles from './campaignForm.module.css'
 import { getFormatedNumber } from 'utils/transformData'
-import Image from 'next/image'
 
 const CampaignForm = ({ onSubmit, onBack, initValues, loading }) => {
   const { targets = [], sectors = [], locations = [], sex = [], ages = [] } = useLists()
-
-  console.log({ initValues })
 
   const [preview, setPreview] = useState(initValues?.logo || null)
 
@@ -36,8 +33,6 @@ const CampaignForm = ({ onSubmit, onBack, initValues, loading }) => {
   })
 
   const values = getValues()
-
-  console.log({ preview })
 
   const handleChangeStartDate = (date) => {
     if (values.endDate && isBefore(values.endDate, date)) {

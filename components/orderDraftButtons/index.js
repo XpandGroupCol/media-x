@@ -11,7 +11,7 @@ const OrderDraftButtons = ({ loading, onClick, status }) => {
 
   return (
     <div className={styles.button}>
-      <FormGroup>
+      <FormGroup sx={{ alignSelf: 'flex-start' }}>
         <FormControlLabel
           control={<Checkbox
             checked={termsAndConditions}

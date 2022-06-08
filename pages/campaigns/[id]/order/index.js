@@ -4,15 +4,15 @@ import Typography from 'components/typography'
 import useWompi from 'hooks/useWompi'
 import useNotification from 'hooks/useNotification'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import styles from './order.module.css'
 import useUpdateCampaignStatus from 'hooks/useUpdateCampaignStatus'
 import OrderTable from 'components/OrderTable'
 import OrderDraftButtons from 'components/orderDraftButtons'
 import UpdateCompanyProfileModal from 'components/updateCompanyProfileModal'
-import { addPayment, getCampaignById } from 'services/campaignServices'
-import { parseDate } from 'utils/transformData'
+import { getCampaignById } from 'services/campaignServices'
+import { handleDownload, parseDate } from 'utils/transformData'
 import { Avatar } from '@mui/material'
 import { CAMPAING_STATUS } from 'utils/config'
 import BackButton from 'components/backButton'
@@ -45,6 +45,7 @@ const Order = ({ campaign, user }) => {
   const [leavePage, setShowLeavePage] = useState(false)
 
   const { loading, setCampaignStatus } = useUpdateCampaignStatus()
+  const contentRef = useRef()
 
   const [showProfileModal, setShowProfileModal] = useState(false)
 
@@ -84,37 +85,43 @@ const Order = ({ campaign, user }) => {
       phoneNumber: phone,
       legalId: nit,
       phoneNumberPrefix: '+57',
-      redirectUrl: 'http://localhost:3000/campaigns'
+      redirectUrl: `${process.env.NEXT_PUBLIC_FRONT_URL}/campaigns/${campaignState?.id}/order`,
+      reference: `${campaignState?.id}-${Date.now().toString()}`
     })
 
     checkout.open(async function ({ transaction }) {
-      const { createdAt, id, paymentMethodType, status } = transaction
+      if (transaction.status === 'VOIDED') {
+        return notify.info('Su pago esta en proceso nuestro equipo ....')
+      }
 
-      if (status !== 'APPROVED') { return notify.error('Parece que algo tuvimos incovenientes al procesar tu pago, intenta nuevamente') }
+      if (transaction.status === 'ERROR' || transaction.status === 'DECLINED') {
+        return notify.info('Algo salio mal con el pago, por favor intente mas tarde.')
+      }
 
-      try {
-        const { data } = await addPayment(campaign?.id, { date: createdAt, id, paymentMethod: paymentMethodType, status })
-        setCampaignState(data)
-        notify.success('El pago se realizo exitosamente')
-      } catch (e) {
-        notify.error('Parece que algo tuvimos incovenientes al procesar tu pago, intenta nuevamente')
+      if (transaction.status === 'APPROVED') {
+        getCampaignById(campaignState?.id).then(({ data }) => {
+          setCampaignState(data)
+          return notify.info('Su pago fue exitoso, nuesto equipo ')
+        }).catch(() => {
+          return notify.info('Algo salio mal con el pago, por favor intente mas tarde.')
+        })
       }
     })
   }
 
   const handleUpdateStatus = (status) => () => {
-    setCampaignStatus(campaignState?.id, status).then((response) => {
-      if (response) {
-        setCampaignState(response)
+    setCampaignStatus(campaignState?.id, status).then((campaign) => {
+      if (campaign) {
+        setCampaignState(campaign)
         notify.success('Su orden ha sido creada correctamente')
       }
     })
   }
 
   const handleCancelOrder = (status) => () => {
-    setCampaignStatus(campaignState?.id, status).then((response) => {
-      if (response) {
-        setCampaignState(response)
+    setCampaignStatus(campaignState?.id, status).then((campaign) => {
+      if (campaign) {
+        setCampaignState(campaign)
         handleCLoseModal()
         notify.success('Su orden ha sido cancelada correctamente')
       }
@@ -122,7 +129,7 @@ const Order = ({ campaign, user }) => {
   }
 
   return (
-    <section>
+    <section ref={contentRef}>
       <div className={styles.summaryCards}>
         <section className={styles.newCampaignHeader}>
           <BackButton href='/campaigns' />
@@ -142,13 +149,18 @@ const Order = ({ campaign, user }) => {
               <Typography fontSize='16px' fontWeight='bold'>Fechas</Typography>
               <Typography>{parseDate(campaignState?.startDate)} - {parseDate(campaignState?.endDate)}</Typography>
             </div>
-            <div className={styles.orderRow}>
+            {/* <div className={styles.orderRow}>
               <Typography fontSize='16px' fontWeight='bold'>ref:</Typography>
-              <Typography>#{campaignState?.id.slice(0, 6)}</Typography>
-            </div>
+              <Typography>#{paid?.reference}</Typography>
+            </div> */}
             <div className={styles.orderRow}>
               <Typography fontSize='16px' fontWeight='bold'>Estado:</Typography>
               <Typography>{CAMPAING_STATUS[campaignState?.status]}</Typography>
+            </div>
+            <div className={styles.downloadPDF}>
+              <Button size='small' onClick={handleDownload(campaign)}>
+                Descargar PDF
+              </Button>
             </div>
           </div>
           <div className={styles.logo}>

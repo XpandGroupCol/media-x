@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
-
+import { jsPDF as JsPDF } from 'jspdf'
+import { CAMPAING_STATUS } from './config'
 export const percentageOptions = {
   style: 'currency',
   minimumFractionDigits: 0,
@@ -173,3 +174,82 @@ export const setCamapign = ({ startDate, endDate, publishers, ...rest }) => ({
   startDate: new Date(startDate),
   publishers: publishers?.map(({ publisherId, formatId, ...rest }) => ({ rowId: `${publisherId}-${formatId}`, publisherId, formatId, ...rest }))
 })
+
+export const handleDownload = (campaign) => () => {
+  const doc = new JsPDF('p', 'pt', 'a4')
+
+  const { summary, publishers, target } = campaign
+
+  const getPublishers = (publishers) => publishers.map(({ _id, label, objectiveGoal, biddingModel, pricePerUnit, share, publisher, value, summary }) => `
+  <tr>
+  <td>${publisher}</td>
+  <td>${target?.label}</td>
+  <td>${label}</td>
+  <td >${share}%</td>
+  <td >${getFormatedNumber(pricePerUnit)}</td>
+  <td >${getFormatedNumber(objectiveGoal)}</td>
+  <td >${biddingModel}</td>
+  <td >${getFormatedNumber(value)}</td>
+</tr>
+`)
+
+  const body = `<table>
+   <thead>
+     <tr>
+       <th >Medio</th>
+       <th >Objetivo publicitario</th>
+       <th >Formato</th>
+       <th >Share</th>
+       <th >C/U</th>
+       <th >KPI</th>
+       <th>Tipo de compra</th>
+       <th >Total</th>
+     </tr>
+   </thead>
+   <tbody>
+     ${getPublishers(publishers)}
+     <tr>
+       <td />
+       <td>Valor bruto:</td>
+       <td align='right'>${getFormatedNumber(summary?.grossValue)}</td>
+     </tr>
+     <tr>
+       <td />
+       <td>Inpuesto:</td>
+
+       <td align='right'>${getFormatedNumber(summary?.serviceFee)}</td>
+     </tr>
+     <tr>
+       <td />
+       <td>Total:</td>
+       <td>${getFormatedNumber(summary?.grossValue + summary?.serviceFee)}</td>
+     </tr>
+   </tbody>
+ </table>`
+
+  const html = `<div>
+            <div>
+              <p>Campaña:</p>
+              <p>${campaign?.name}</p>
+            </div>
+            <div>
+              <p>Marca:</p>
+              <p>${campaign?.brand}</p>
+            </div>
+            <div>
+              <p>Fechas</p>
+              <p>${parseDate(campaign?.startDate)} - ${parseDate(campaign?.endDate)}</p>
+            </div>
+            <div>
+              <p>Estado:</p>
+              <p>${CAMPAING_STATUS[campaign?.status]}</p>
+            </div>
+ </div>
+  ${body}`
+
+  doc.html(html, {
+    callback: function (doc) {
+      doc.save('order.pdf')
+    }
+  })
+}

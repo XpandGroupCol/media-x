@@ -2,10 +2,10 @@ import useNotification from 'hooks/useNotification'
 import { useCallback, useLayoutEffect, useState } from 'react'
 import { WOMPI_KEY } from 'utils/config'
 
-const config = ({ amountInCents, email, fullName, phoneNumber, legalId, phoneNumberPrefix, redirectUrl }) => ({
+const config = ({ amountInCents, email, fullName, phoneNumber, legalId, phoneNumberPrefix, redirectUrl, reference }) => ({
   currency: 'COP',
   amountInCents,
-  reference: `media-x-${Math.random().toString().slice(2, 16)}`,
+  reference,
   publicKey: WOMPI_KEY,
   redirectUrl,
   customerData: {

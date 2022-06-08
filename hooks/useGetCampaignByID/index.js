@@ -9,8 +9,6 @@ const useGetCampaignByID = () => {
   const { query } = useRouter()
   const [campaign, updateCampaign] = useAtom(campaignAtom)
 
-  console.log({ campaign })
-
   const { data, error } = useSWR(!query?.id || campaign?.id ? null : `${GET_CAMPAIGN_BY_ID}/${query.id}`, {
     onSuccess: ({ data }) => updateCampaign({ ...setCamapign(data) })
   })

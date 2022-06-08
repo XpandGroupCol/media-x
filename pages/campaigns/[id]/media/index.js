@@ -64,15 +64,15 @@ const Media = ({ campaign }) => {
 
       <section className={styles.uploadMedia}>
 
-        {files.map(({ label, rowId, height, width, mimetype, imageUrl, loading = false, error = false }, index) => (
+        {files.map(({ label, _id, height, width, mimetype, imageUrl, loading = false, error = false }, index) => (
 
-          <div key={rowId} className={styles.mediaRow}>
+          <div key={_id} className={styles.mediaRow}>
             <div>
               <Typography fontWeight='bold'>{label}</Typography>
               <Typography>Dimensiones: {width}x{height}.{mimetype}</Typography>
             </div>
             <RowMedia
-              id={rowId}
+              id={_id}
               isLoading={loading}
               url={imageUrl}
               upload={handleValidator(index, { height, width, mimetype, label })}

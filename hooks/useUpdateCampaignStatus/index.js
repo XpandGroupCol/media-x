@@ -9,9 +9,9 @@ const useUpdateCampaignStatus = () => {
   const setCampaignStatus = useCallback(async (id, status) => {
     try {
       setLoading(true)
-      const { data: campaign } = await updateCampaignState(id, status)
+      const { data } = await updateCampaignState(id, status)
       setLoading(false)
-      return Promise.resolve(campaign)
+      return Promise.resolve(data)
     } catch (e) {
       setLoading(false)
       notify.error('Algo salio mal, por favor intenta nuevamente')

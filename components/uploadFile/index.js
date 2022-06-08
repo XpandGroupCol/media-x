@@ -1,5 +1,4 @@
 
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import styles from './uploadFile.module.css'

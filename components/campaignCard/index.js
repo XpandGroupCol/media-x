@@ -69,6 +69,7 @@ const CampaignCard = (campaign) => {
         <Typography component='span' className={classNames(styles.status, { [styles[status]]: Boolean(styles[status]) })}>
           {CAMPAING_STATUS[status]}
         </Typography>
+
       </header>
       <div className={styles.body}>
         <div className={styles.row}>
@@ -86,7 +87,7 @@ const CampaignCard = (campaign) => {
 
       </div>
       <footer className={styles.footer}>
-        {!hasAllFiles && ['draft', 'pending', 'cancel'].includes(status) && (
+        {!hasAllFiles && ['draft', 'pending', 'cancel', 'paid'].includes(status) && (
           <Link href={`/campaigns/${id}/order`}>
             <Button component='a'>
               Ver order

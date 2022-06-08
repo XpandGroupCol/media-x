@@ -42,6 +42,10 @@
    margin-bottom: 20px;
 }
 
+.downloadPDF {
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 500px) {
     .orderHeader{
         flex-direction: column;
