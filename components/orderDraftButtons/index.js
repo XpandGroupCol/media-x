@@ -16,7 +16,7 @@ const OrderDraftButtons = ({ campaign, setCampaignState }) => {
   const handleUpdateStatus = () => {
     setCampaignStatus(campaign?.id, 'pending').then((data) => {
       if (data) {
-        setCampaignState(campaign)
+        setCampaignState(data)
         notify.success('Su orden ha sido creada correctamente')
       }
     })

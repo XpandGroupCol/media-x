@@ -11,7 +11,7 @@ const useForgotpassword = () => {
       setLoading(true)
       await forgotPassword(payload)
       setLoading(false)
-      notify.success('Si estás registrado en media x, recibirás un mensaje para restablecer la contraseña.')
+      notify.success('Si estás registrado en shrareflow, recibirás un mensaje para restablecer la contraseña.')
     } catch (error) {
       setLoading(false)
       notify.error('Algo salio mal por favor intente nuevamente')
