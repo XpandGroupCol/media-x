@@ -11,7 +11,7 @@ const Checkout = ({ campaign }) => {
 
 export async function getServerSideProps ({ req, query }) {
   const token = req.cookies?.sessionid || null
- 
+
   const { id, status } = query
 
   if (!id || !status || !token) {

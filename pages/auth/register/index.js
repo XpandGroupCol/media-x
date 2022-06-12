@@ -81,7 +81,6 @@ const Register = () => {
 
 export async function getServerSideProps ({ req, query }) {
   const token = req.cookies?.sessionid || null
- 
 
   if (token) {
     return {

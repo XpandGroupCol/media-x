@@ -1,12 +1,11 @@
 import { axiosFetcher } from './axiosFetcher'
 
-export const profileGetMe = async (data) => {
+export const profileGetMe = async () => {
   try {
-    const response = await axiosFetcher('/users/site/me', {
-      data,
+    const { data } = await axiosFetcher('/users/site/me', {
       method: 'GET'
     })
-    return response
+    return data
   } catch (e) {
     return Promise.reject(e)
   }

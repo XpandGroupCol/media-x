@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import cookie from 'js-cookie'
 import { useRouter } from 'next/router'
 import { getAuth } from 'utils/cookie'
+import { profileGetMe } from 'services/profileServices'
 
 const SessionContext = createContext()
 
@@ -10,17 +11,11 @@ const SessionProvider = ({ children }) => {
   const router = useRouter()
 
   const getMe = useCallback(() => {
-    setUser({
-      address: 'sabaneta',
-      checkRut: true,
-      company: 'globant',
-      companyEmail: 'diego.contreras1219@gmail.com',
-      email: 'diego.contreras@globant.com',
-      id: '629dead7c5fcf44615892127',
-      name: 'Diego Contreras',
-      nit: '1234567890',
-      phone: '3138637341',
-      role: 'Client'
+    profileGetMe().then(({ data }) => {
+      setUser(data)
+    }).catch(() => {
+      setUser(null)
+      cookie.remove('sessionid')
     })
   }, [])
 
