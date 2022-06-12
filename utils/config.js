@@ -20,3 +20,5 @@ export const MIN_INVESTMENT = 1000000
 export const GET_PROFILE_URL = `${BASE_URL}/users/site/me`
 
 export const GET_CAMPAIGN_BY_ID = `${BASE_URL}/campaigns`
+
+export const GET_CAMPAIGN_BY_USER = `${BASE_URL}/campaigns/byUser`

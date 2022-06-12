@@ -1,18 +1,20 @@
-import { Avatar, Button } from '@mui/material'
-import classNames from 'classnames'
-import Typography from 'components/typography'
-import Image from 'next/image'
 import Link from 'next/link'
-import { CAMPAING_STATUS } from 'utils/config'
-import { getFormatedNumber, parseDate, setCamapign } from 'utils/transformData'
-import styles from './campaigns.module.css'
-import noImage from 'public/images/no-photo-available.png'
 import { useAtom } from 'jotai'
-import { campaignAtom } from 'globalState/campaignAtom'
-import Menu from './menu'
+import { mutate } from 'swr'
+import classNames from 'classnames'
+import { Button } from '@mui/material'
 import MenuItem from '@mui/material/MenuItem'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+
+import Typography from 'components/typography'
+import Avatar from 'components/avatar'
+import Menu from './menu'
+import { CAMPAING_STATUS, GET_CAMPAIGN_BY_USER } from 'utils/config'
+import { getFormatedNumber, parseDate, setCamapign } from 'utils/transformData'
+import { campaignAtom } from 'globalState/campaignAtom'
+
+import styles from './campaigns.module.css'
 import useDeleteCampaign from 'hooks/useDeleteCampaign'
 
 const CampaignCard = (campaign) => {
@@ -28,15 +30,19 @@ const CampaignCard = (campaign) => {
   }
 
   const handleDeleteCampaign = () => {
-    removeCampaign(id)
+    removeCampaign(id).then((id) => {
+      if (id) {
+        mutate(GET_CAMPAIGN_BY_USER)
+      }
+    })
   }
 
-  const hasAllFiles = publishers.some(({ imageUrl }) => !imageUrl)
+  const emptyFiles = publishers.some(({ imageUrl }) => !imageUrl)
 
   return (
     <div className={styles.card} key={id}>
       <header className={styles.header}>
-        {logo ? <Avatar src={logo} sx={{ width: 80, height: 80 }} /> : <Image style={{ borderRadius: '100%' }} src={noImage} width={80} height={80} />}
+        <Avatar src={logo} label={brand} sx={{ width: 80, height: 80 }} />
         {['draft', 'pending', 'cancel'].includes(status) && (
           <div className={styles.menu}>
             <Menu>
@@ -87,12 +93,21 @@ const CampaignCard = (campaign) => {
 
       </div>
       <footer className={styles.footer}>
-        {!hasAllFiles && ['draft', 'pending', 'cancel', 'paid'].includes(status) && (
-          <Link href={`/campaigns/${id}/order`}>
-            <Button component='a'>
-              Ver order
-            </Button>
-          </Link>)}
+        {emptyFiles
+          ? (
+            <Link href={`/campaigns/${id}/media`}>
+              <Button component='a' color='secondary'>
+                Agregar multimedia
+              </Button>
+            </Link>)
+          : ['draft', 'pending', 'cancel', 'paid'].includes(status) && (
+            <Link href={`/campaigns/${id}/order`}>
+              <Button component='a'>
+                Ver order
+              </Button>
+            </Link>
+            )}
+
       </footer>
     </div>
   )

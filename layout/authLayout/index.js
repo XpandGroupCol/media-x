@@ -1,13 +1,7 @@
-import useVerifySession from 'hooks/useVerifySession'
-import LoadingPage from 'components/loadingPage'
 import Typography from 'components/typography'
 import styles from './auth.module.css'
 
 const AuthLayout = ({ onSubmit, title, children }) => {
-  const isAuth = useVerifySession()
-
-  if (isAuth) return <LoadingPage />
-
   return (
     <div className={styles.login}>
       <div className={styles.containerForm}>

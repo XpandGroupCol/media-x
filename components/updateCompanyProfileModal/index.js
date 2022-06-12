@@ -118,6 +118,7 @@ const UpdateCompanyProfileModal = ({ open, onClose, initValues, showButton }) =>
             element={InputFile}
             error={Boolean(errors?.rut?.message)}
             helperText={errors?.rut?.message || 'El rut debe estar en un formato de PDF'}
+            placeholder='Ver Rut'
           />
         </div>
         <div className={styles.buttons}>

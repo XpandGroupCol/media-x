@@ -89,7 +89,19 @@ export default function SignIn () {
   )
 }
 
-export async function getStaticProps () {
+export async function getServerSideProps ({ req }) {
+  const token = req.cookies?.sessionid || null
+
+  if (token) {
+    return {
+      redirect: {
+        destination: '/campaigns',
+        permanent: false
+
+      }
+    }
+  }
+
   return {
     props: {
       protected: true

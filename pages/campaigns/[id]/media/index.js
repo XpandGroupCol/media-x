@@ -11,6 +11,8 @@ import useNotification from 'hooks/useNotification'
 import RowMedia from 'components/rowMedia'
 import { useRouter } from 'next/router'
 import { getCampaignById, updateCampaign } from 'services/campaignServices'
+import { compareFiles, copyValues } from 'utils/transformData'
+
 const Media = ({ campaign }) => {
   const router = useRouter()
 
@@ -18,13 +20,14 @@ const Media = ({ campaign }) => {
 
   const { loading, setCamapign } = useUpdateCampaign()
 
-  const { files, validator, removeFile } = useValidatorFile(campaign?.publishers)
+  const { files, validator, removeFile } = useValidatorFile(copyValues(campaign?.publishers))
 
   const onSubmit = () => {
+    const emptyFiles = files.some(({ imageUrl }) => !imageUrl)
     const publishers = files.map(({ loading, ...restOfFiles }) => ({ ...restOfFiles }))
     setCamapign(campaign?.id, { publishers }).then((campaign) => {
       if (campaign) {
-        router.push(`/campaigns/${campaign?.id}/order`)
+        router.push(emptyFiles ? '/campaigns' : `/campaigns/${campaign?.id}/order`)
       }
     })
   }
@@ -47,9 +50,9 @@ const Media = ({ campaign }) => {
     validator(index, media)
   }
 
-  const disabledButton = files.some(({ imageUrl }) => !imageUrl)
-
   const handleRemoveFile = index => () => removeFile(index)
+
+  const disabledButton = compareFiles(campaign?.publishers, files)
 
   return (
     <section className={styles.mediaPage}>
@@ -91,13 +94,21 @@ const Media = ({ campaign }) => {
 }
 
 export async function getServerSideProps ({ req, query }) {
-  const user = req.cookies?.user || null
-  const token = user ? JSON.parse(user)?.accessToken : null
+  const token = req.cookies?.sessionid || null
 
-  if (!query.id || !token) {
+  if (!query.id) {
     return {
       redirect: {
         destination: '/campaigns',
+        permanent: false
+      }
+    }
+  }
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: `/auth/login?q=campaigns/${query.id}/media`,
         permanent: false
       }
     }

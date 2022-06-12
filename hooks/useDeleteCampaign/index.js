@@ -13,7 +13,7 @@ const useDeleteCampaign = () => {
 
       setLoading(false)
       notify.success('Su campaña ha sido creada correctamente')
-      // aqui deberia mutar la data
+      return Promise.resolve(id)
     } catch (error) {
       setLoading(false)
       notify.error('Algo salio mal por favor intente nuevamente')

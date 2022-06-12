@@ -1,6 +1,7 @@
-import { Avatar, IconButton, InputAdornment } from '@mui/material'
+import { IconButton, InputAdornment } from '@mui/material'
 import ControllerField from 'components/ControllerField'
 import Input from 'components/input'
+import Avatar from 'components/avatar'
 import Typography from 'components/typography'
 import { getFormatedNumber } from 'utils/transformData'
 import styles from './publisherCard.module.css'
@@ -10,7 +11,7 @@ import PercentIcon from '@mui/icons-material/Percent'
 const PublisherCard = ({
   error,
   helperText, control, name, deleteRow, onBlur,
-  publisher, label, device, objectiveGoal, value, rowId
+  publisher, label, device, objectiveGoal, value, logo
 }) => {
   return (
     <div
@@ -24,7 +25,7 @@ const PublisherCard = ({
         <CloseIcon fontSize='small' />
       </IconButton>
       <div className={styles.brand}>
-        <Avatar>{publisher?.slice(0, 2)}</Avatar>
+        <Avatar src={logo} label={publisher} />
         <div>
           <Typography fontSize='16px' fontWeight='bold'> {publisher} </Typography>
           <Typography fontSize='14px'>{label}</Typography>

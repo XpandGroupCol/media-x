@@ -4,9 +4,10 @@ import Input from 'components/input'
 import styles from './inputFile.module.css'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { forwardRef } from 'react'
-import Button from 'components/button'
+import { IconButton } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
 
-const InputFile = forwardRef(({ label, id, onChange, accept = 'application/pdf', value, ...props }, ref) => {
+const InputFile = forwardRef(({ label, id, onChange, remove, accept = 'application/pdf', value, placeholder, ...props }, ref) => {
   const hanldeOnChange = ({ target }) => {
     const file = target.files[0]
     if (file) return onChange(file)
@@ -14,13 +15,18 @@ const InputFile = forwardRef(({ label, id, onChange, accept = 'application/pdf',
 
   const fileName = value?.name || ''
 
+  const hanldeDeleteFile = () => {
+    remove && remove()
+    onChange(null)
+  }
+
   if (value?.url) {
     return (
-      <div>
-        <a href={value?.url} target='blank'>Ver documento</a>
-        <Button onClick={() => onChange(null)}>
-          Eliminar
-        </Button>
+      <div className={styles.removeFile}>
+        <a href={value?.url} target='blank'>{placeholder}</a>
+        <IconButton size='small' onClick={hanldeDeleteFile}>
+          <DeleteIcon fontSize='small' />
+        </IconButton>
       </div>
     )
   }

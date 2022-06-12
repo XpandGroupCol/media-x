@@ -1,0 +1,33 @@
+.profile {
+    background: white;
+    padding: 30px;
+    max-width: 700px;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 4px 12px;
+}
+
+.avatar{
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.profileForm{
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+@media screen and (max-width: 500px) {
+    .buttons{
+        flex-direction: column;
+    }
+}

@@ -37,11 +37,11 @@ export const profileSchema = yup.object().shape({
   nit: yup.string().when({
     is: value => value.length > 0,
     then: yup.string().min(10, 'El Nit debe tener 10 digitos').max(10, 'El Nit debe tener 10 digitos')
-  }),
+  }).required(),
   phone: yup.string().when({
     is: value => value.length > 0,
     then: yup.string().min(10, 'El telefono debe tener 10 digitos').max(10, 'El telefono debe tener 10 digitos')
-  }),
-  address: yup.string(),
-  companyEmail: yup.string()
+  }).required(),
+  address: yup.string().required(),
+  companyEmail: yup.string().required()
 }).required()

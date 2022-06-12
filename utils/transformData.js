@@ -175,6 +175,13 @@ export const setCamapign = ({ startDate, endDate, publishers, ...rest }) => ({
   publishers: publishers?.map(({ publisherId, formatId, ...rest }) => ({ rowId: `${publisherId}-${formatId}`, publisherId, formatId, ...rest }))
 })
 
+export const compareFiles = (publishers = [], files = []) => {
+  const _publishers = publishers.filter((i) => Boolean(i?.imageUrl))
+  const _files = files.filter((i) => Boolean(i?.imageUrl))
+
+  return _publishers.length === _files.length
+}
+
 export const handleDownload = (campaign) => () => {
   const doc = new JsPDF('p', 'pt', 'a4')
 

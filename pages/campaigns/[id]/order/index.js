@@ -1,135 +1,23 @@
 
+import { useState } from 'react'
+
 import Button from 'components/button'
+import Avatar from 'components/avatar'
 import Typography from 'components/typography'
-import useWompi from 'hooks/useWompi'
-import useNotification from 'hooks/useNotification'
-
-import { useRef, useState } from 'react'
-
-import styles from './order.module.css'
-import useUpdateCampaignStatus from 'hooks/useUpdateCampaignStatus'
 import OrderTable from 'components/OrderTable'
 import OrderDraftButtons from 'components/orderDraftButtons'
-import UpdateCompanyProfileModal from 'components/updateCompanyProfileModal'
+import BackButton from 'components/backButton'
 import { getCampaignById } from 'services/campaignServices'
 import { handleDownload, parseDate } from 'utils/transformData'
-import { Avatar } from '@mui/material'
+import OrderPaidButtons from 'components/orderPaidButtons'
 import { CAMPAING_STATUS } from 'utils/config'
-import BackButton from 'components/backButton'
-import Link from 'next/link'
-
-import ConfirmCancelCampaign from 'components/confirmCancelCampaign'
-
-const getUserInitValues = ({
-  address,
-  company,
-  companyEmail,
-  nit,
-  phone,
-  checkRut,
-  rut
-}) => ({
-  address,
-  company,
-  companyEmail,
-  nit,
-  phone,
-  checkRut,
-  rut
-})
+import styles from './order.module.css'
 
 const Order = ({ campaign, user }) => {
-  const { wompi, disabled } = useWompi()
-
   const [campaignState, setCampaignState] = useState(campaign)
-  const [leavePage, setShowLeavePage] = useState(false)
-
-  const { loading, setCampaignStatus } = useUpdateCampaignStatus()
-  const contentRef = useRef()
-
-  const [showProfileModal, setShowProfileModal] = useState(false)
-
-  const [cancelModal, setCancelModal] = useState(false)
-
-  const handleCLoseModal = () => setCancelModal(false)
-  const handleOpenModal = () => setCancelModal(true)
-
-  const notify = useNotification()
-
-  const handleClose = () =>
-    setShowProfileModal(false)
-
-  const handlePay = () => {
-    const {
-      address,
-      company,
-      companyEmail,
-      nit,
-      phone,
-      checkRut,
-      rut
-    } = user
-
-    if (address && company && companyEmail && nit && phone && rut && !checkRut) {
-      return notify.info('Estamos validando la informacion de tu empresa.')
-    }
-
-    if (!checkRut) {
-      return setShowProfileModal(true)
-    }
-
-    const checkout = wompi({
-      amountInCents: `${campaignState.amount}00`,
-      email: user?.email,
-      fullName: `${user?.name} ${user?.lastName}`,
-      phoneNumber: phone,
-      legalId: nit,
-      phoneNumberPrefix: '+57',
-      redirectUrl: `${process.env.NEXT_PUBLIC_FRONT_URL}/campaigns/${campaignState?.id}/order`,
-      reference: `${campaignState?.id}-${Date.now().toString()}`
-    })
-
-    checkout.open(async function ({ transaction }) {
-      if (transaction.status === 'VOIDED') {
-        return notify.info('Su pago esta en proceso nuestro equipo ....')
-      }
-
-      if (transaction.status === 'ERROR' || transaction.status === 'DECLINED') {
-        return notify.info('Algo salio mal con el pago, por favor intente mas tarde.')
-      }
-
-      if (transaction.status === 'APPROVED') {
-        getCampaignById(campaignState?.id).then(({ data }) => {
-          setCampaignState(data)
-          return notify.info('Su pago fue exitoso, nuesto equipo ')
-        }).catch(() => {
-          return notify.info('Algo salio mal con el pago, por favor intente mas tarde.')
-        })
-      }
-    })
-  }
-
-  const handleUpdateStatus = (status) => () => {
-    setCampaignStatus(campaignState?.id, status).then((campaign) => {
-      if (campaign) {
-        setCampaignState(campaign)
-        notify.success('Su orden ha sido creada correctamente')
-      }
-    })
-  }
-
-  const handleCancelOrder = (status) => () => {
-    setCampaignStatus(campaignState?.id, status).then((campaign) => {
-      if (campaign) {
-        setCampaignState(campaign)
-        handleCLoseModal()
-        notify.success('Su orden ha sido cancelada correctamente')
-      }
-    })
-  }
 
   return (
-    <section ref={contentRef}>
+    <section>
       <div className={styles.summaryCards}>
         <section className={styles.newCampaignHeader}>
           <BackButton href='/campaigns' />
@@ -164,7 +52,11 @@ const Order = ({ campaign, user }) => {
             </div>
           </div>
           <div className={styles.logo}>
-            <Avatar sx={{ width: '80px', height: '80px' }}>{campaignState?.name?.toUpperCase().slice(0, 2)}</Avatar>
+            <Avatar
+              sx={{ width: '80px', height: '80px' }}
+              label={campaignState?.name}
+              src={campaignState?.logo}
+            />
           </div>
         </div>
 
@@ -179,39 +71,44 @@ const Order = ({ campaign, user }) => {
         />
         <div className={styles.actions}>
           {(campaignState?.status === 'draft' || campaignState?.status === 'cancel') &&
-            <OrderDraftButtons loading={loading} onClick={handleUpdateStatus('pending')} status={campaignState?.status} />}
+            <OrderDraftButtons
+              campaign={campaignState}
+              setCampaignState={setCampaignState}
+            />}
 
           {campaignState?.status === 'pending' && (
             <div className={styles.paymentWithWompi}>
-              <Link href='/campaigns'>
-                <Button variant='outlined' color='primary'>
-                  Salir
-                </Button>
-              </Link>
-              <Button disabled={leavePage} onClick={handleOpenModal} variant='outlined' color='secondary'>
-                Cancelar orden
-              </Button>
-              <Button onClick={handlePay} disabled={disabled || leavePage}>
-                Pago con wompi
-              </Button>
-              <UpdateCompanyProfileModal showButton={() => setShowLeavePage(true)} open={showProfileModal} onClose={handleClose} initValues={getUserInitValues(user)} />
-            </div>)}
+              <OrderPaidButtons
+                user={user}
+                campaign={campaignState}
+                setCampaignState={setCampaignState}
+              />
+            </div>
+          )}
         </div>
 
       </div>
-      <ConfirmCancelCampaign open={cancelModal} onClose={handleCLoseModal} onSubmit={handleCancelOrder('cancel')} loading={loading} />
+
     </section>
   )
 }
 
 export async function getServerSideProps ({ req, query }) {
-  const user = req.cookies?.user || null
-  const token = user ? JSON.parse(user)?.accessToken : null
+  const token = req.cookies?.sessionid || null
 
-  if (!query.id || !token) {
+  if (!query.id) {
     return {
       redirect: {
         destination: '/campaigns',
+        permanent: false
+      }
+    }
+  }
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: `/auth/login?q=campaigns/${query.id}/order`,
         permanent: false
       }
     }

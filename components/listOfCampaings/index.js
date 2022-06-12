@@ -1,21 +1,16 @@
-import { IconButton } from '@mui/material'
 import Link from 'next/link'
+import { useAtom } from 'jotai'
+import { IconButton } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import styles from './listOfCampaings.module.css'
+
 import CampaignCard from 'components/campaignCard'
+import CardSkeleton from 'components/campaignCard/cardSkeleton'
 import Typography from 'components/typography'
 import { campaignAtom, InitCampaignState } from 'globalState/campaignAtom'
-import { useAtom } from 'jotai'
-const ListOfCampaings = ({ data, error }) => {
-  const [, updateCampaign] = useAtom(campaignAtom)
+import styles from './listOfCampaings.module.css'
 
-  if (error) {
-    return (
-      <div className={styles.empty}>
-        <Typography>Al salio mal</Typography>
-      </div>
-    )
-  }
+const ListOfCampaings = ({ data, isLoading }) => {
+  const [, updateCampaign] = useAtom(campaignAtom)
 
   return (
     <div className={styles.campaignsPage}>
@@ -43,9 +38,9 @@ const ListOfCampaings = ({ data, error }) => {
          data.length > 0
            ? (
              <div className={styles.listOfCards}>
-               {data.map((campaign) => (
-                 <div className={styles.card} key={campaign.id}>
-                   <CampaignCard {...campaign} />
+               {data.map((campaign, index) => (
+                 <div className={styles.card} key={campaign.id || index}>
+                   {isLoading ? <CardSkeleton /> : <CampaignCard {...campaign} />}
                  </div>
                ))}
              </div>

@@ -1,0 +1,11 @@
+.button{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.action{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}

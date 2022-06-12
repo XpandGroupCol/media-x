@@ -1,25 +1,26 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 import classNames from 'classnames'
-
-import { Avatar, Divider, IconButton, Menu, MenuItem } from '@mui/material'
+import { Divider, IconButton, Menu, MenuItem } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 import DashboardIcon from '@mui/icons-material/Dashboard'
+
 import Typography from 'components/typography'
+import Avatar from 'components/avatar'
 import ActiveLink from 'components/activeLink'
+import LoadingPage from 'components/loadingPage'
 import { useSession } from 'providers/sessionProvider'
 
 import styles from './layout.module.css'
-import { useRouter } from 'next/router'
-import LoadingPage from 'components/loadingPage'
-import Link from 'next/link'
 
 const Layout = ({ children }) => {
   const [showMenu, setShowMenu] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
-  const { replace } = useRouter()
+  const { replace, pathname } = useRouter()
 
   const open = Boolean(anchorEl)
   const handleClick = (event) =>
@@ -34,8 +35,8 @@ const Layout = ({ children }) => {
   const { session, logout } = useSession()
 
   useEffect(() => {
-    if (session === null) replace('/auth/login')
-  }, [session, replace])
+    if (session === null) replace(`/auth/login?q=${pathname}`)
+  }, [session, replace, pathname])
 
   if (!session) return <LoadingPage />
 
@@ -43,7 +44,7 @@ const Layout = ({ children }) => {
     <div className={styles.page}>
       {showMenu && <div className={styles.overlay} onClick={handleShowMenu} />}
       <aside className={classNames(styles.aside, { [styles.showAside]: showMenu })}>
-        <Typography className={styles.logo}>MEDIAX</Typography>
+        <Typography className={styles.logo}>SHAREFLOW</Typography>
         <div className={styles.nav}>
           <ActiveLink href='/campaigns' activeClassName={styles.active}>
             <a className={styles.link}>
@@ -66,28 +67,58 @@ const Layout = ({ children }) => {
             <IconButton className={styles.openMenu} color='primary' onClick={handleShowMenu}>
               <MenuIcon />
             </IconButton>
-            <Typography component='h2' color='primary'>MEDIAX</Typography>
+            <Typography component='h2' color='primary'>SHAREFLOW</Typography>
           </div>
 
           <button onClick={handleClick} className={styles.logout}>
-            <div>
-              <Typography>{session?.name}</Typography>
-              <Typography sx={{ fontSize: 12, textAlign: 'right' }}>{session?.role}</Typography>
+            <div className={styles.userInfo}>
+              <Typography sx={{
+                maxWidth: '150px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontSize: 14,
+                fontWeight: 'bold'
+              }}
+              >{session?.name}
+              </Typography>
+              <Typography color='gray' sx={{ fontSize: 12, textAlign: 'right' }}>{session?.role}</Typography>
             </div>
-            {session?.image ? <Avatar src={session?.image} sx={{ width: 36, height: 36 }} /> : <Avatar sx={{ width: 36, height: 36 }}>{session?.name?.slice(0, 2)?.toUpperCase()}</Avatar>}
+            <Avatar src={session?.image} label={session?.name} sx={{ width: 36, height: 36 }} />
+
           </button>
           <Menu
-            id='basic-menu'
+            id='header-menu'
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
             MenuListProps={{
               'aria-labelledby': 'basic-button'
             }}
-            anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-            className={styles.menu}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            sx={{
+              '& .MuiPaper-root': {
+                boxShadow: 'rgb(0 0 0 / 10%) 0px 4px 12px',
+                paddingTop: '15px'
+              }
+            }}
           >
-
+            <MenuItem sx={{ gap: '20px' }}>
+              <div>
+                <Typography fontWeight='bold'>{session?.name}
+                </Typography>
+                <Typography color='gray' sx={{ fontSize: 12 }}>{session?.role}</Typography>
+              </div>
+              <Avatar src={session?.image} label={session?.name} sx={{ width: 36, height: 36 }} />
+            </MenuItem>
+            <Divider />
             <Link href='/profile'>
               <MenuItem component='a' onClick={handleClose}>
                 <PersonIcon fontSize='small' sx={{ marginRight: '10px' }} />
