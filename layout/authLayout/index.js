@@ -7,7 +7,7 @@ const AuthLayout = ({ onSubmit, title, children }) => {
       <div className={styles.containerForm}>
         <form className={styles.form} onSubmit={onSubmit}>
           <div className={styles.titleContainer}>
-            <h3>Media X</h3>
+            <h3>SHAREFLOW</h3>
             <p>Bienvenido, {title}</p>
           </div>
 

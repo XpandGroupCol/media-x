@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import cookie from 'js-cookie'
 import { useRouter } from 'next/router'
 import { getAuth } from 'utils/cookie'
-import { profileGetMe } from 'services/profileServices'
+import { profileGetSession } from 'services/profileServices'
 
 const SessionContext = createContext()
 
@@ -11,7 +11,7 @@ const SessionProvider = ({ children }) => {
   const router = useRouter()
 
   const getMe = useCallback(() => {
-    profileGetMe().then(({ data }) => {
+    profileGetSession().then(({ data }) => {
       setUser(data)
     }).catch(() => {
       setUser(null)

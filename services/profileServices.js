@@ -2,7 +2,18 @@ import { axiosFetcher } from './axiosFetcher'
 
 export const profileGetMe = async () => {
   try {
-    const { data } = await axiosFetcher('/users/site/me', {
+    const response = await axiosFetcher('/users/site/me', {
+      method: 'GET'
+    })
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
+export const profileGetSession = async () => {
+  try {
+    const { data } = await axiosFetcher('/users/site/session', {
       method: 'GET'
     })
     return data
